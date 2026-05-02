@@ -23,10 +23,10 @@ export function PermissionTable({ onEdit }: PermissionTableProps) {
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-10">
               <input type="checkbox" className="rounded border-gray-300" />
             </th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">权限名称</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">权限标识</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">关联角色数</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Permission Name</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Permission Key</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Assigned Roles</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -42,8 +42,8 @@ export function PermissionTable({ onEdit }: PermissionTableProps) {
               <td className="px-4 py-3 text-sm text-gray-500">{getRoleCount(perm.id)}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => onEdit(perm)}>编辑</Button>
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deletePermission(perm.id)}>删除</Button>
+                  <Button variant="ghost" size="sm" onClick={() => onEdit(perm)}>Edit</Button>
+                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deletePermission(perm.id)}>Delete</Button>
                 </div>
               </td>
             </tr>

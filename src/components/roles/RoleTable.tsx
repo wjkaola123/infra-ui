@@ -27,11 +27,11 @@ export function RoleTable({ onEdit }: RoleTableProps) {
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-10">
               <input type="checkbox" className="rounded border-gray-300" />
             </th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">角色名称</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">权限列表</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">关联用户数</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">创建时间</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role Name</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Permissions</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Assigned Users</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created At</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -52,8 +52,8 @@ export function RoleTable({ onEdit }: RoleTableProps) {
               <td className="px-4 py-3 text-sm text-gray-500">{role.createdAt}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => onEdit(role)}>编辑</Button>
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteRole(role.id)}>删除</Button>
+                  <Button variant="ghost" size="sm" onClick={() => onEdit(role)}>Edit</Button>
+                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteRole(role.id)}>Delete</Button>
                 </div>
               </td>
             </tr>

@@ -1,10 +1,10 @@
 import { NavLink } from 'react-router-dom';
 
 const navItems = [
-  { path: '/users', label: '用户管理', icon: UsersIcon },
-  { path: '/roles', label: '角色管理', icon: ShieldIcon },
-  { path: '/permissions', label: '权限管理', icon: KeyIcon },
-  { path: '/logs', label: '操作日志', icon: ClipboardIcon },
+  { path: '/users', label: 'Users', icon: UsersIcon },
+  { path: '/roles', label: 'Roles', icon: ShieldIcon },
+  { path: '/permissions', label: 'Permissions', icon: KeyIcon },
+  { path: '/logs', label: 'Operation Logs', icon: ClipboardIcon },
 ];
 
 export function Sidebar() {
@@ -36,7 +36,7 @@ export function Sidebar() {
           </div>
           <div>
             <p className="text-sm text-white">admin</p>
-            <p className="text-xs text-white/50">超级管理员</p>
+            <p className="text-xs text-white/50">Super Admin</p>
           </div>
         </div>
       </div>

@@ -65,50 +65,50 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={user ? '编辑用户' : '新增用户'}
+      title={user ? 'Edit User' : 'Create User'}
       footer={
         <>
           <button
             onClick={onClose}
             className="px-4 py-2 text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
           >
-            取消
+            Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={!name.trim()}
             className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
           >
-            {user ? '保存' : '创建'}
+            {user ? 'Save' : 'Create'}
           </button>
         </>
       }
     >
       <div className="space-y-4">
         <Input
-          label="用户名"
+          label="Username"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="请输入用户名"
+          placeholder="Enter username"
           maxLength={20}
         />
         <Select
-          label="角色分配"
+          label="Role Assignment"
           value={roleIds}
           onChange={setRoleIds}
           options={roleOptions}
-          placeholder="选择角色"
+          placeholder="Select roles"
         />
         <Select
-          label="直接权限"
+          label="Direct Permissions"
           value={permissionIds}
           onChange={setPermissionIds}
           options={permOptions}
-          placeholder="选择权限"
+          placeholder="Select permissions"
         />
         <div className="flex items-center gap-3">
           <Switch checked={status} onChange={setStatus} />
-          <span className="text-sm text-gray-700">{status ? '启用' : '禁用'}</span>
+          <span className="text-sm text-gray-700">{status ? 'Active' : 'Inactive'}</span>
         </div>
       </div>
     </Modal>

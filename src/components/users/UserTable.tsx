@@ -44,12 +44,12 @@ export function UserTable({ onEdit }: UserTableProps) {
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-10">
               <input type="checkbox" className="rounded border-gray-300" />
             </th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">用户名</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">所属角色</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">直接权限</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">状态</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">创建时间</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Username</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Roles</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Permissions</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created At</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -77,14 +77,14 @@ export function UserTable({ onEdit }: UserTableProps) {
               </td>
               <td className="px-4 py-3">
                 <Badge variant={user.status === 'active' ? 'success' : 'warning'}>
-                  {user.status === 'active' ? '启用' : '禁用'}
+                  {user.status === 'active' ? 'Active' : 'Inactive'}
                 </Badge>
               </td>
               <td className="px-4 py-3 text-sm text-gray-500">{user.createdAt}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => onEdit(user)}>编辑</Button>
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => handleDelete(user.id)}>删除</Button>
+                  <Button variant="ghost" size="sm" onClick={() => onEdit(user)}>Edit</Button>
+                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => handleDelete(user.id)}>Delete</Button>
                 </div>
               </td>
             </tr>

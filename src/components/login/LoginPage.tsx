@@ -19,7 +19,7 @@ export function LoginPage() {
       window.location.hash = '#/';
       window.location.reload();
     } catch (err: any) {
-      setError(err.response?.data?.detail || '登录失败，请检查用户名和密码');
+      setError(err.response?.data?.detail || 'Login failed. Please check your username and password.');
     } finally {
       setLoading(false);
     }
@@ -32,25 +32,25 @@ export function LoginPage() {
           <div className="w-10 h-10 bg-primary rounded flex items-center justify-center">
             <span className="text-white font-bold">RB</span>
           </div>
-          <h1 className="text-xl font-semibold text-gray-900">权限管理系统</h1>
+          <h1 className="text-xl font-semibold text-gray-900">Permission Management System</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="用户名"
+            label="Username"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="请输入用户名"
+            placeholder="Enter username"
             required
           />
 
           <Input
-            label="密码"
+            label="Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="请输入密码"
+            placeholder="Enter password"
             required
           />
 
@@ -63,7 +63,7 @@ export function LoginPage() {
             className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
             disabled={loading}
           >
-            {loading ? '登录中...' : '登录'}
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>

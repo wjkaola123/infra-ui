@@ -15,7 +15,7 @@ interface SelectProps {
   placeholder?: string;
 }
 
-export function Select({ label, value, onChange, options, multiple = true, placeholder = '选择...' }: SelectProps) {
+export function Select({ label, value, onChange, options, multiple = true, placeholder = 'Select...' }: SelectProps) {
   return (
     <div>
       {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
@@ -25,7 +25,7 @@ export function Select({ label, value, onChange, options, multiple = true, place
             {value.length === 0 ? (
               <span className="text-gray-400">{placeholder}</span>
             ) : (
-              <span>{value.length} 项已选</span>
+              <span>{value.length} selected</span>
             )}
           </Listbox.Button>
           <Transition

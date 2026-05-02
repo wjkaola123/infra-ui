@@ -12,8 +12,8 @@ export const useUserApi = () => {
     setLoading(true);
     setError(null);
     try {
-      const backendUsers = await userApi.list();
-      const mappedUsers = backendUsers.map(mapBackendUserToUser);
+      const paginatedData = await userApi.list();
+      const mappedUsers = paginatedData.items.map(mapBackendUserToUser);
       setUsers(mappedUsers);
     } catch (e: any) {
       setError(e.message || 'Failed to fetch users');

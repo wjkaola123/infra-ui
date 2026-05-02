@@ -13,18 +13,18 @@ export function LogsPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-gray-900">操作日志</h2>
+      <h2 className="text-lg font-semibold text-gray-900">Operation Logs</h2>
 
       <div className="overflow-x-auto">
         <table className="w-full bg-white rounded-lg shadow">
           <thead>
             <tr className="border-b border-gray-200">
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作时间</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作者</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作类型</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">目标类型</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">目标名称</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">详情</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Timestamp</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Operator</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Target Type</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Target Name</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Details</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">

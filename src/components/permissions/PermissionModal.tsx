@@ -12,10 +12,10 @@ interface PermissionModalProps {
 }
 
 const PERMISSION_OPTIONS: { key: Permission; label: string }[] = [
-  { key: 'READ', label: '读取 (READ)' },
-  { key: 'WRITE', label: '写入 (WRITE)' },
-  { key: 'DELETE', label: '删除 (DELETE)' },
-  { key: 'ADMIN', label: '管理 (ADMIN)' },
+  { key: 'READ', label: 'Read (READ)' },
+  { key: 'WRITE', label: 'Write (WRITE)' },
+  { key: 'DELETE', label: 'Delete (DELETE)' },
+  { key: 'ADMIN', label: 'Admin (ADMIN)' },
 ];
 
 export function PermissionModal({ isOpen, onClose, permission }: PermissionModalProps) {
@@ -50,24 +50,24 @@ export function PermissionModal({ isOpen, onClose, permission }: PermissionModal
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={permission ? '编辑权限' : '新增权限'}
+      title={permission ? 'Edit Permission' : 'Create Permission'}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>取消</Button>
-          <Button onClick={handleSubmit} disabled={!name.trim()}>{permission ? '保存' : '创建'}</Button>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={!name.trim()}>{permission ? 'Save' : 'Create'}</Button>
         </>
       }
     >
       <div className="space-y-4">
         <Input
-          label="权限名称"
+          label="Permission Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="如：用户管理"
+          placeholder="e.g. User Management"
           maxLength={20}
         />
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">权限标识</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Permission Key</label>
           <select
             value={key}
             onChange={(e) => setKey(e.target.value as Permission)}

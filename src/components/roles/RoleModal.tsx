@@ -47,28 +47,28 @@ export function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={role ? '编辑角色' : '新增角色'}
+      title={role ? 'Edit Role' : 'Create Role'}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>取消</Button>
-          <Button onClick={handleSubmit} disabled={!name.trim()}>{role ? '保存' : '创建'}</Button>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={!name.trim()}>{role ? 'Save' : 'Create'}</Button>
         </>
       }
     >
       <div className="space-y-4">
         <Input
-          label="角色名称"
+          label="Role Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="请输入角色名称"
+          placeholder="Enter role name"
           maxLength={20}
         />
         <Select
-          label="权限分配"
+          label="Permission Assignment"
           value={permissionIds}
           onChange={setPermissionIds}
           options={permOptions}
-          placeholder="选择权限"
+          placeholder="Select permissions"
         />
       </div>
     </Modal>

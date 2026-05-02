@@ -25,18 +25,18 @@ export function PermissionsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">权限管理</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Permission Management</h2>
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="搜索权限..."
+            placeholder="Search permissions..."
             className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
           <button
             onClick={handleAdd}
             className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-hover"
           >
-            + 新增权限
+            + Add Permission
           </button>
         </div>
       </div>

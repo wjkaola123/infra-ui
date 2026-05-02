@@ -48,9 +48,16 @@ export interface AppState {
   selectedEntity: { id: string; type: EntityType } | null;
   operationLog: string[];
 
+  // Pagination
+  usersTotal: number;
+  usersPage: number;
+  usersPageSize: number;
+  usersTotalPages: number;
+
   selectEntity: (entity: { id: string; type: EntityType } | null) => void;
   setUsers: (users: User[]) => void;
-  fetchUsersFromApi: () => Promise<void>;
+  fetchUsersFromApi: (page?: number, pageSize?: number) => Promise<void>;
+  setUsersPage: (page: number) => void;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
   updateUser: (id: string, data: Partial<User>) => void;
   deleteUser: (id: string) => Promise<{ success: boolean; error?: string }>;

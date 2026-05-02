@@ -9,6 +9,14 @@ export interface BackendUser {
   updated_at: string | null;
 }
 
+export interface PaginatedUsersResponse {
+  items: BackendUser[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
 export interface CreateUserRequest {
   username: string;
   email: string;
@@ -28,8 +36,13 @@ export interface ApiResponse<T> {
 }
 
 export const userApi = {
-  list: async (): Promise<BackendUser[]> => {
-    const response = await apiClient.get<ApiResponse<BackendUser[]>>('/users/');
+  list: async (params?: { page?: number; page_size?: number }): Promise<PaginatedUsersResponse> => {
+    const searchParams = new URLSearchParams();
+    if (params?.page) searchParams.set('page', String(params.page));
+    if (params?.page_size) searchParams.set('page_size', String(params.page_size));
+    const queryString = searchParams.toString();
+    const url = queryString ? `/users/?${queryString}` : '/users/';
+    const response = await apiClient.get<ApiResponse<PaginatedUsersResponse>>(url);
     return response.data.data;
   },
 

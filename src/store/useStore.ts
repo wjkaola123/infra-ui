@@ -14,15 +14,31 @@ export const useStore = create<AppState>((set, get) => ({
   selectedEntity: null,
   operationLog: [],
 
+  // Pagination defaults
+  usersTotal: 0,
+  usersPage: 1,
+  usersPageSize: 10,
+  usersTotalPages: 1,
+
   selectEntity: (entity) => set({ selectedEntity: entity }),
 
   setUsers: (users) => set({ users }),
 
-  fetchUsersFromApi: async () => {
+  setUsersPage: (page) => {
+    get().fetchUsersFromApi(page, get().usersPageSize);
+  },
+
+  fetchUsersFromApi: async (page = 1, pageSize = 10) => {
     try {
-      const backendUsers = await userApi.list();
-      const mappedUsers = backendUsers.map(mapBackendUserToUser);
-      set({ users: mappedUsers });
+      const paginatedData = await userApi.list({ page, page_size: pageSize });
+      const mappedUsers = paginatedData.items.map(mapBackendUserToUser);
+      set({
+        users: mappedUsers,
+        usersTotal: paginatedData.total,
+        usersPage: paginatedData.page,
+        usersPageSize: paginatedData.page_size,
+        usersTotalPages: paginatedData.total_pages,
+      });
     } catch (error) {
       console.error('Failed to fetch users:', error);
     }
@@ -35,7 +51,7 @@ export const useStore = create<AppState>((set, get) => ({
       createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
     };
     set((state) => ({ users: [...state.users, newUser] }));
-    get().addLog(`创建用户: ${user.name}`);
+    get().addLog(`Created user: ${user.name}`);
     try {
       await userApi.create({ username: user.name, email: `${user.name}@example.com` });
     } catch (error) {
@@ -48,7 +64,7 @@ export const useStore = create<AppState>((set, get) => ({
       users: state.users.map((u) => (u.id === id ? { ...u, ...data } : u)),
     }));
     const name = get().users.find((u) => u.id === id)?.name;
-    get().addLog(`更新用户: ${name}`);
+    get().addLog(`Updated user: ${name}`);
     try {
       const backendId = parseInt(id, 10);
       const updateData: any = {};
@@ -68,10 +84,10 @@ export const useStore = create<AppState>((set, get) => ({
       set((state) => ({
         users: state.users.filter((u) => u.id !== id),
       }));
-      get().addLog(`删除用户: ${user?.name}`);
+      get().addLog(`Deleted user: ${user?.name}`);
       return { success: true };
     } catch (error: any) {
-      const errorMessage = error.response?.data?.detail || '删除失败';
+      const errorMessage = error.response?.data?.detail || 'Delete failed';
       console.error('Failed to delete user in backend:', errorMessage);
       return { success: false, error: errorMessage };
     }
@@ -84,7 +100,7 @@ export const useStore = create<AppState>((set, get) => ({
       createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
     };
     set((state) => ({ roles: [...state.roles, newRole] }));
-    get().addLog(`创建角色: ${role.name}`);
+    get().addLog(`Created role: ${role.name}`);
   },
 
   updateRole: (id, data) => {
@@ -92,7 +108,7 @@ export const useStore = create<AppState>((set, get) => ({
       roles: state.roles.map((r) => (r.id === id ? { ...r, ...data } : r)),
     }));
     const name = get().roles.find((r) => r.id === id)?.name;
-    get().addLog(`更新角色: ${name}`);
+    get().addLog(`Updated role: ${name}`);
   },
 
   deleteRole: (id) => {
@@ -100,13 +116,13 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       roles: state.roles.filter((r) => r.id !== id),
     }));
-    get().addLog(`删除角色: ${role?.name}`);
+    get().addLog(`Deleted role: ${role?.name}`);
   },
 
   addPermission: (permission) => {
     const newPerm: PermissionEntity = { ...permission, id: generateId() };
     set((state) => ({ permissions: [...state.permissions, newPerm] }));
-    get().addLog(`创建权限: ${permission.name}`);
+    get().addLog(`Created permission: ${permission.name}`);
   },
 
   updatePermission: (id, data) => {
@@ -120,7 +136,7 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       permissions: state.permissions.filter((p) => p.id !== id),
     }));
-    get().addLog(`删除权限: ${perm?.name}`);
+    get().addLog(`Deleted permission: ${perm?.name}`);
   },
 
   assignRoles: (userId, roleIds) => {
@@ -128,7 +144,7 @@ export const useStore = create<AppState>((set, get) => ({
       users: state.users.map((u) => (u.id === userId ? { ...u, roleIds } : u)),
     }));
     const userName = get().users.find((u) => u.id === userId)?.name;
-    get().addLog(`分配角色: ${userName}`);
+    get().addLog(`Assigned roles: ${userName}`);
   },
 
   assignPermissions: (roleId, permissionIds) => {
@@ -136,7 +152,7 @@ export const useStore = create<AppState>((set, get) => ({
       roles: state.roles.map((r) => (r.id === roleId ? { ...r, permissionIds } : r)),
     }));
     const roleName = get().roles.find((r) => r.id === roleId)?.name;
-    get().addLog(`分配权限: ${roleName}`);
+    get().addLog(`Assigned permissions: ${roleName}`);
   },
 
   addLog: (message) =>
