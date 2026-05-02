@@ -43,7 +43,7 @@ export function Select({ label, value, onChange, options, multiple = true, place
                     `cursor-pointer px-3 py-2 text-sm ${active ? 'bg-gray-100' : ''}`
                   }
                 >
-                  {({ selected }) => (
+                  {() => (
                     <div className="flex items-center gap-2">
                       <input
                         type="checkbox"

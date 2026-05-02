@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import type { AppState, User, Role, PermissionEntity } from '../types';
-import { SEED_USERS, SEED_ROLES, SEED_PERMISSIONS, SEED_LOGS } from '../mocks/data/seed';
+import { SEED_ROLES, SEED_PERMISSIONS, SEED_LOGS } from '../mocks/data/seed';
+import { userApi, mapBackendUserToUser } from '../api';
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export const useStore = create<AppState>((set, get) => ({
-  users: SEED_USERS,
+  users: [],
   roles: SEED_ROLES,
   permissions: SEED_PERMISSIONS,
   logs: SEED_LOGS,
@@ -15,7 +16,19 @@ export const useStore = create<AppState>((set, get) => ({
 
   selectEntity: (entity) => set({ selectedEntity: entity }),
 
-  addUser: (user) => {
+  setUsers: (users) => set({ users }),
+
+  fetchUsersFromApi: async () => {
+    try {
+      const backendUsers = await userApi.list();
+      const mappedUsers = backendUsers.map(mapBackendUserToUser);
+      set({ users: mappedUsers });
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    }
+  },
+
+  addUser: async (user) => {
     const newUser: User = {
       ...user,
       id: generateId(),
@@ -23,22 +36,42 @@ export const useStore = create<AppState>((set, get) => ({
     };
     set((state) => ({ users: [...state.users, newUser] }));
     get().addLog(`创建用户: ${user.name}`);
+    try {
+      await userApi.create({ username: user.name, email: `${user.name}@example.com` });
+    } catch (error) {
+      console.error('Failed to create user in backend:', error);
+    }
   },
 
-  updateUser: (id, data) => {
+  updateUser: async (id, data) => {
     set((state) => ({
       users: state.users.map((u) => (u.id === id ? { ...u, ...data } : u)),
     }));
     const name = get().users.find((u) => u.id === id)?.name;
     get().addLog(`更新用户: ${name}`);
+    try {
+      const backendId = parseInt(id, 10);
+      const updateData: any = {};
+      if (data.name !== undefined) updateData.username = data.name;
+      if (data.status !== undefined) updateData.is_active = data.status === 'active';
+      await userApi.update(backendId, updateData);
+    } catch (error) {
+      console.error('Failed to update user in backend:', error);
+    }
   },
 
-  deleteUser: (id) => {
+  deleteUser: async (id) => {
     const user = get().users.find((u) => u.id === id);
     set((state) => ({
       users: state.users.filter((u) => u.id !== id),
     }));
     get().addLog(`删除用户: ${user?.name}`);
+    try {
+      const backendId = parseInt(id, 10);
+      await userApi.delete(backendId);
+    } catch (error) {
+      console.error('Failed to delete user in backend:', error);
+    }
   },
 
   addRole: (role) => {

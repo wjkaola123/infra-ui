@@ -49,6 +49,8 @@ export interface AppState {
   operationLog: string[];
 
   selectEntity: (entity: { id: string; type: EntityType } | null) => void;
+  setUsers: (users: User[]) => void;
+  fetchUsersFromApi: () => Promise<void>;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
   updateUser: (id: string, data: Partial<User>) => void;
   deleteUser: (id: string) => void;
