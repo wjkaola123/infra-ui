@@ -1,16 +1,21 @@
-export type Permission = 'READ' | 'CREATE' | 'UPDATE' | 'DELETE';
+export type Permission = 'READ' | 'WRITE' | 'DELETE' | 'ADMIN';
+
+export type UserStatus = 'active' | 'inactive';
 
 export interface User {
   id: string;
   name: string;
   roleIds: string[];
   permissionIds: string[];
+  status: UserStatus;
+  createdAt: string;
 }
 
 export interface Role {
   id: string;
   name: string;
   permissionIds: string[];
+  createdAt: string;
 }
 
 export interface PermissionEntity {
@@ -19,46 +24,41 @@ export interface PermissionEntity {
   key: Permission;
 }
 
-export type EntityType = 'user' | 'role' | 'permission';
+export type LogAction = 'create' | 'update' | 'delete' | 'assign';
+export type LogTargetType = 'user' | 'role' | 'permission';
 
-export interface Relation {
+export interface OperationLog {
   id: string;
-  sourceId: string;
-  sourceType: EntityType;
-  targetId: string;
-  targetType: EntityType;
+  timestamp: string;
+  operator: string;
+  action: LogAction;
+  targetType: LogTargetType;
+  targetName: string;
+  detail: string;
 }
 
-export type AssignMode = {
-  sourceId: string;
-  sourceType: EntityType;
-  sourceName: string;
-} | null;
+export type EntityType = 'user' | 'role' | 'permission';
 
 export interface AppState {
-  // Data
   users: User[];
   roles: Role[];
   permissions: PermissionEntity[];
-  relations: Relation[];
+  logs: OperationLog[];
 
-  // UI State
   selectedEntity: { id: string; type: EntityType } | null;
-  assignMode: AssignMode;
   operationLog: string[];
 
-  // Actions
   selectEntity: (entity: { id: string; type: EntityType } | null) => void;
-  enterAssignMode: (sourceId: string, sourceType: EntityType, sourceName: string) => void;
-  exitAssignMode: () => void;
-  confirmAssignment: (targetId: string, targetType: EntityType) => void;
-  removeRelation: (relationId: string) => void;
-  addUser: (name: string) => void;
-  addRole: (name: string, permissionIds: string[]) => void;
-  addPermission: (name: string, key: Permission) => void;
+  addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
+  updateUser: (id: string, data: Partial<User>) => void;
   deleteUser: (id: string) => void;
+  addRole: (role: Omit<Role, 'id' | 'createdAt'>) => void;
+  updateRole: (id: string, data: Partial<Role>) => void;
   deleteRole: (id: string) => void;
+  addPermission: (permission: Omit<PermissionEntity, 'id'>) => void;
+  updatePermission: (id: string, data: Partial<PermissionEntity>) => void;
   deletePermission: (id: string) => void;
-  resetSandbox: () => void;
+  assignRoles: (userId: string, roleIds: string[]) => void;
+  assignPermissions: (roleId: string, permissionIds: string[]) => void;
   addLog: (message: string) => void;
 }
