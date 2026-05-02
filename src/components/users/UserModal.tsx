@@ -15,11 +15,9 @@ interface UserModalProps {
 export function UserModal({ isOpen, onClose, user }: UserModalProps) {
   const [name, setName] = useState('');
   const [roleIds, setRoleIds] = useState<string[]>([]);
-  const [permissionIds, setPermissionIds] = useState<string[]>([]);
   const [status, setStatus] = useState(true);
 
   const roles = useStore((s) => s.roles);
-  const permissions = useStore((s) => s.permissions);
   const addUser = useStore((s) => s.addUser);
   const updateUser = useStore((s) => s.updateUser);
 
@@ -27,12 +25,10 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
     if (user) {
       setName(user.name);
       setRoleIds(user.roleIds);
-      setPermissionIds(user.permissionIds);
       setStatus(user.status === 'active');
     } else {
       setName('');
       setRoleIds([]);
-      setPermissionIds([]);
       setStatus(true);
     }
   }, [user, isOpen]);
@@ -44,14 +40,13 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
       updateUser(user.id, {
         name: name.trim(),
         roleIds,
-        permissionIds,
         status: status ? 'active' : 'inactive',
       });
     } else {
       addUser({
         name: name.trim(),
         roleIds,
-        permissionIds,
+        permissionIds: [],
         status: status ? 'active' : 'inactive',
       });
     }
@@ -59,7 +54,6 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
   };
 
   const roleOptions = roles.map((r) => ({ value: r.id, label: r.name }));
-  const permOptions = permissions.map((p) => ({ value: p.id, label: p.name }));
 
   return (
     <Modal
@@ -98,13 +92,6 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
           onChange={setRoleIds}
           options={roleOptions}
           placeholder="Select roles"
-        />
-        <Select
-          label="Direct Permissions"
-          value={permissionIds}
-          onChange={setPermissionIds}
-          options={permOptions}
-          placeholder="Select permissions"
         />
         <div className="flex items-center gap-3">
           <Switch checked={status} onChange={setStatus} />

@@ -31,6 +31,12 @@ export function UserTable({ onEdit }: UserTableProps) {
   const getPermNames = (permIds: string[]) =>
     permIds.map((id) => permissions.find((p) => p.id === id)?.name || '').filter(Boolean);
 
+  const formatDateTime = (isoString: string) => {
+    const date = new Date(isoString);
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  };
+
   return (
     <div className="overflow-x-auto">
       {error && (
@@ -80,7 +86,7 @@ export function UserTable({ onEdit }: UserTableProps) {
                   {user.status === 'active' ? 'Active' : 'Inactive'}
                 </Badge>
               </td>
-              <td className="px-4 py-3 text-sm text-gray-500">{user.createdAt}</td>
+              <td className="px-4 py-3 text-sm text-gray-500">{formatDateTime(user.createdAt)}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" onClick={() => onEdit(user)}>Edit</Button>
