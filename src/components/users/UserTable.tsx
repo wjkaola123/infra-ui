@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useStore } from '../../store/useStore';
 import { Badge } from '../ui/Badge';
 import { Tag } from '../ui/Tag';
@@ -9,10 +10,20 @@ interface UserTableProps {
 }
 
 export function UserTable({ onEdit }: UserTableProps) {
+  const [error, setError] = useState<string | null>(null);
   const users = useStore((s) => s.users);
   const roles = useStore((s) => s.roles);
   const permissions = useStore((s) => s.permissions);
   const deleteUser = useStore((s) => s.deleteUser);
+
+  const handleDelete = async (id: string) => {
+    setError(null);
+    const result = await deleteUser(id);
+    if (!result.success && result.error) {
+      setError(result.error);
+      setTimeout(() => setError(null), 3000);
+    }
+  };
 
   const getRoleNames = (roleIds: string[]) =>
     roleIds.map((id) => roles.find((r) => r.id === id)?.name || '').filter(Boolean);
@@ -22,6 +33,11 @@ export function UserTable({ onEdit }: UserTableProps) {
 
   return (
     <div className="overflow-x-auto">
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
       <table className="w-full bg-white rounded-lg shadow">
         <thead>
           <tr className="border-b border-gray-200">
@@ -68,7 +84,7 @@ export function UserTable({ onEdit }: UserTableProps) {
               <td className="px-4 py-3">
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" onClick={() => onEdit(user)}>编辑</Button>
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteUser(user.id)}>删除</Button>
+                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => handleDelete(user.id)}>删除</Button>
                 </div>
               </td>
             </tr>

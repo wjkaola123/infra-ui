@@ -20,9 +20,16 @@ export const getTokens = () => ({
   refresh: localStorage.getItem('refresh_token'),
 });
 
+export const setUsername = (username: string) => {
+  localStorage.setItem('username', username);
+};
+
+export const getUsername = () => localStorage.getItem('username') || '未知用户';
+
 export const clearTokens = () => {
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
+  localStorage.removeItem('username');
 };
 
 apiClient.interceptors.request.use((config) => {

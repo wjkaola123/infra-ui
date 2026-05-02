@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { authApi } from '../../api';
+import { authApi, setUsername as saveUsername } from '../../api';
 import { Input } from '../ui/Input';
-import { Button } from '../ui/Button';
 
 export function LoginPage() {
   const [username, setUsername] = useState('');
@@ -16,6 +15,7 @@ export function LoginPage() {
 
     try {
       await authApi.login({ username, password });
+      saveUsername(username);
       window.location.hash = '#/';
       window.location.reload();
     } catch (err: any) {
@@ -58,13 +58,13 @@ export function LoginPage() {
             <p className="text-sm text-red-500">{error}</p>
           )}
 
-          <Button
+          <button
             type="submit"
-            className="w-full"
+            className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
             disabled={loading}
           >
             {loading ? '登录中...' : '登录'}
-          </Button>
+          </button>
         </form>
       </div>
     </div>

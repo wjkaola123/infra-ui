@@ -1,4 +1,4 @@
-import { clearTokens } from '../../api';
+import { clearTokens, getUsername } from '../../api';
 
 export function Header() {
   const handleLogout = () => {
@@ -17,7 +17,7 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-500">当前用户: admin</span>
+        <span className="text-sm text-gray-500">当前用户: {getUsername()}</span>
         <button
           onClick={handleLogout}
           className="text-sm text-gray-500 hover:text-gray-700"

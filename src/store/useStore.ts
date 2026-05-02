@@ -62,15 +62,18 @@ export const useStore = create<AppState>((set, get) => ({
 
   deleteUser: async (id) => {
     const user = get().users.find((u) => u.id === id);
-    set((state) => ({
-      users: state.users.filter((u) => u.id !== id),
-    }));
-    get().addLog(`删除用户: ${user?.name}`);
     try {
       const backendId = parseInt(id, 10);
       await userApi.delete(backendId);
-    } catch (error) {
-      console.error('Failed to delete user in backend:', error);
+      set((state) => ({
+        users: state.users.filter((u) => u.id !== id),
+      }));
+      get().addLog(`删除用户: ${user?.name}`);
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || '删除失败';
+      console.error('Failed to delete user in backend:', errorMessage);
+      return { success: false, error: errorMessage };
     }
   },
 

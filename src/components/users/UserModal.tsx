@@ -3,7 +3,6 @@ import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
 import { Switch } from '../ui/Switch';
-import { Button } from '../ui/Button';
 import { useStore } from '../../store/useStore';
 import type { User } from '../../types';
 
@@ -69,8 +68,19 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
       title={user ? '编辑用户' : '新增用户'}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>取消</Button>
-          <Button onClick={handleSubmit} disabled={!name.trim()}>{user ? '保存' : '创建'}</Button>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          >
+            取消
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={!name.trim()}
+            className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+          >
+            {user ? '保存' : '创建'}
+          </button>
         </>
       }
     >

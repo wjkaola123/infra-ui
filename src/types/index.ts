@@ -53,7 +53,7 @@ export interface AppState {
   fetchUsersFromApi: () => Promise<void>;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
   updateUser: (id: string, data: Partial<User>) => void;
-  deleteUser: (id: string) => void;
+  deleteUser: (id: string) => Promise<{ success: boolean; error?: string }>;
   addRole: (role: Omit<Role, 'id' | 'createdAt'>) => void;
   updateRole: (id: string, data: Partial<Role>) => void;
   deleteRole: (id: string) => void;
