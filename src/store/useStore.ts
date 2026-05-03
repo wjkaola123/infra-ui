@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import type { AppState, User, Role, PermissionEntity } from '../types';
-import { SEED_ROLES, SEED_PERMISSIONS, SEED_LOGS } from '../mocks/data/seed';
-import { userApi, mapBackendUserToUser } from '../api';
+import { SEED_PERMISSIONS, SEED_LOGS } from '../mocks/data/seed';
+import { userApi, roleApi, mapBackendUserToUser, mapBackendRoleToRole } from '../api';
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export const useStore = create<AppState>((set, get) => ({
   users: [],
-  roles: SEED_ROLES,
+  roles: [],
   permissions: SEED_PERMISSIONS,
   logs: SEED_LOGS,
 
@@ -20,12 +20,22 @@ export const useStore = create<AppState>((set, get) => ({
   usersPageSize: 10,
   usersTotalPages: 1,
 
+  // Role pagination
+  rolesTotal: 0,
+  rolesPage: 1,
+  rolesPageSize: 10,
+  rolesTotalPages: 1,
+
   selectEntity: (entity) => set({ selectedEntity: entity }),
 
   setUsers: (users) => set({ users }),
 
   setUsersPage: (page) => {
     get().fetchUsersFromApi(page, get().usersPageSize);
+  },
+
+  setRolesPage: (page) => {
+    get().fetchRolesFromApi(page, get().rolesPageSize);
   },
 
   fetchUsersFromApi: async (page = 1, pageSize = 10) => {
@@ -90,6 +100,22 @@ export const useStore = create<AppState>((set, get) => ({
       const errorMessage = error.response?.data?.detail || 'Delete failed';
       console.error('Failed to delete user in backend:', errorMessage);
       return { success: false, error: errorMessage };
+    }
+  },
+
+  fetchRolesFromApi: async (page = 1, pageSize = 10) => {
+    try {
+      const paginatedData = await roleApi.list({ page, page_size: pageSize });
+      const mappedRoles = paginatedData.items.map(mapBackendRoleToRole);
+      set({
+        roles: mappedRoles,
+        rolesTotal: paginatedData.total,
+        rolesPage: paginatedData.page,
+        rolesPageSize: paginatedData.page_size,
+        rolesTotalPages: paginatedData.total_pages,
+      });
+    } catch (error) {
+      console.error('Failed to fetch roles:', error);
     }
   },
 

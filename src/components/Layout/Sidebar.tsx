@@ -12,11 +12,11 @@ export function Sidebar() {
   return (
     <aside className="w-[220px] bg-sidebar flex flex-col h-full">
       <div className="flex-1 py-4">
-        <div className="px-4 py-3 border-b border-white/10 mb-2">
-          <p className="text-xs text-white/50 uppercase tracking-wider mb-2">Quick Nav</p>
-          <button onClick={() => navigate('/users')} className="block w-full px-2 py-1.5 text-sm text-white/70 hover:text-white text-left">Users</button>
-          <button onClick={() => navigate('/roles')} className="block w-full px-2 py-1.5 text-sm text-white/70 hover:text-white text-left">Roles</button>
-          <button onClick={() => navigate('/permissions')} className="block w-full px-2 py-1.5 text-sm text-white/70 hover:text-white text-left">Permissions</button>
+        <div className="px-4 py-3 border-b border-gray-300 mb-2">
+          <p className="text-xs text-gray-600 uppercase tracking-wider mb-2 font-semibold">Quick Nav</p>
+          <button onClick={() => navigate('/users')} className="block w-full px-3 py-2 text-sm text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-md text-left transition-colors mb-1">Users</button>
+          <button onClick={() => navigate('/roles')} className="block w-full px-3 py-2 text-sm text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-md text-left transition-colors mb-1">Roles</button>
+          <button onClick={() => navigate('/permissions')} className="block w-full px-3 py-2 text-sm text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-md text-left transition-colors">Permissions</button>
         </div>
         {navItems.map((item) => (
           <NavLink
