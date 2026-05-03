@@ -64,6 +64,7 @@ export interface AppState {
   setUsers: (users: User[]) => void;
   fetchUsersFromApi: (page?: number, pageSize?: number) => Promise<void>;
   setUsersPage: (page: number) => void;
+  setUsersPageSize: (size: number) => void;
   setRolesPage: (page: number) => void;
   setRolesPageSize: (size: number) => void;
   fetchRolesFromApi: (page?: number, pageSize?: number) => Promise<void>;
