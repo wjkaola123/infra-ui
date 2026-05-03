@@ -19,6 +19,6 @@ export const mapUserToBackendCreate = (user: Partial<User>) => ({
 export const mapBackendRoleToRole = (backendRole: BackendRole): Role => ({
   id: String(backendRole.id),
   name: backendRole.name,
-  permissionIds: backendRole.permission_ids.map(String),
+  permissionIds: (backendRole.permission_ids || []).map(String),
   createdAt: backendRole.created_at,
 });

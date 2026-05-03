@@ -1,7 +1,11 @@
 import { http, HttpResponse, delay } from 'msw';
-import { SEED_ROLES, SEED_PERMISSIONS, SEED_LOGS } from '../data/seed';
+import { SEED_PERMISSIONS, SEED_LOGS } from '../data/seed';
 
-let roles = [...SEED_ROLES];
+let roles = [
+  { id: 1, name: 'Super Administrator', permission_ids: [1, 2, 3, 4], created_at: '2024-01-01 00:00:00' },
+  { id: 2, name: 'Viewer', permission_ids: [1], created_at: '2024-01-02 00:00:00' },
+  { id: 3, name: 'Editor', permission_ids: [1, 2, 3], created_at: '2024-01-03 00:00:00' },
+];
 let permissions = [...SEED_PERMISSIONS];
 let logs = [...SEED_LOGS];
 
@@ -9,39 +13,56 @@ const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export const handlers = [
   // Roles
-  http.get('/api/roles', async () => {
+  http.get('/api/v1/roles/', async ({ request }) => {
     await delay(100);
-    return HttpResponse.json({ data: roles });
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get('page') || '1');
+    const page_size = parseInt(url.searchParams.get('page_size') || '10');
+    const start = (page - 1) * page_size;
+    const end = start + page_size;
+    const items = roles.slice(start, end);
+    return HttpResponse.json({
+      message: 'success',
+      status: 200,
+      data: {
+        items,
+        total: roles.length,
+        page,
+        page_size,
+        total_pages: Math.ceil(roles.length / page_size),
+      },
+    });
   }),
 
-  http.post('/api/roles', async ({ request }) => {
+  http.post('/api/v1/roles/', async ({ request }) => {
     await delay(100);
     const body = await request.json() as any;
+    const newId = roles.length > 0 ? Math.max(...roles.map((r) => r.id)) + 1 : 1;
     const newRole = {
-      id: generateId(),
+      id: newId,
       name: body.name,
-      permissionIds: body.permissionIds || [],
-      createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      permission_ids: body.permission_ids || [],
+      created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
     };
     roles.push(newRole);
-    return HttpResponse.json({ data: newRole }, { status: 201 });
+    return HttpResponse.json({ message: 'success', status: 201, data: newRole });
   }),
 
-  http.put('/api/roles/:id', async ({ params, request }) => {
+  http.put('/api/v1/roles/:id', async ({ params, request }) => {
     await delay(100);
     const body = await request.json() as any;
-    const index = roles.findIndex((r) => r.id === params.id);
+    const index = roles.findIndex((r) => r.id === parseInt(params.id as string));
     if (index !== -1) {
       roles[index] = { ...roles[index], ...body };
-      return HttpResponse.json({ data: roles[index] });
+      return HttpResponse.json({ message: 'success', status: 200, data: roles[index] });
     }
-    return HttpResponse.json({ error: 'Not found' }, { status: 404 });
+    return HttpResponse.json({ message: 'Not found', status: 404, data: null });
   }),
 
-  http.delete('/api/roles/:id', async ({ params }) => {
+  http.delete('/api/v1/roles/:id', async ({ params }) => {
     await delay(100);
-    roles = roles.filter((r) => r.id !== params.id);
-    return HttpResponse.json({ success: true });
+    roles = roles.filter((r) => r.id !== parseInt(params.id as string));
+    return HttpResponse.json({ message: 'success', status: 200, data: null });
   }),
 
   // Permissions
