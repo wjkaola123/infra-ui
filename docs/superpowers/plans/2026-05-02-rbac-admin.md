@@ -1,73 +1,73 @@
-# RBAC 权限管理后台 - 实现计划
+# RBAC Permission Admin - Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 构建经典企业风格的 RBAC 权限管理后台，浅色主题，侧边导航 + 数据表格布局，高信息密度，适合管理员日常操作。
+**Goal:** Build a classic enterprise-style RBAC permission management admin with light theme, sidebar navigation + data table layout, high information density, suitable for administrators' daily operations.
 
-**Architecture:** 单页应用，React Router 做页面路由，Zustand 管理状态，TanStack Table 做数据表格，MSW 模拟 API，Tailwind CSS 实现经典企业风格 UI。
+**Architecture:** Single-page application, React Router for page routing, Zustand for state management, TanStack Table for data tables, MSW for mock API, Tailwind CSS for classic enterprise-style UI.
 
 **Tech Stack:** Vite, React 18, TypeScript, Tailwind CSS v3, Headless UI, Zustand, TanStack Table v8, MSW, Heroicons, date-fns
 
 ---
 
-## 文件结构
+## File Structure
 
 ```
 src/
-├── main.tsx                          # 入口，MSW 初始化
-├── App.tsx                           # 根组件，路由配置
-├── index.css                         # 全局样式 + CSS 变量
+├── main.tsx                          # Entry point, MSW initialization
+├── App.tsx                           # Root component, routing config
+├── index.css                         # Global styles + CSS variables
 ├── mocks/
 │   ├── browser.ts                    # MSW worker
 │   ├── handlers/
 │   │   └── index.ts                 # API handlers
 │   └── data/
-│       └── seed.ts                  # 预设数据
+│       └── seed.ts                  # Seed data
 ├── store/
 │   └── useStore.ts                  # Zustand store
 ├── components/
 │   ├── Layout/
-│   │   ├── Header.tsx               # 顶栏
-│   │   ├── Sidebar.tsx              # 侧边栏
-│   │   └── Layout.tsx               # 布局容器
+│   │   ├── Header.tsx               # Header
+│   │   ├── Sidebar.tsx              # Sidebar
+│   │   └── Layout.tsx               # Layout container
 │   ├── ui/
-│   │   ├── Button.tsx               # 按钮
-│   │   ├── Badge.tsx                # 状态标签
-│   │   ├── Tag.tsx                  # 角色/权限标签
-│   │   ├── Modal.tsx                # 弹窗包装
-│   │   ├── Select.tsx               # 下拉选择
-│   │   ├── Input.tsx                # 输入框
-│   │   ├── Switch.tsx               # 开关
-│   │   ├── Pagination.tsx           # 分页器
-│   │   └── SearchInput.tsx          # 搜索框
+│   │   ├── Button.tsx               # Button
+│   │   ├── Badge.tsx                # Status badge
+│   │   ├── Tag.tsx                  # Role/Permission tag
+│   │   ├── Modal.tsx                # Modal wrapper
+│   │   ├── Select.tsx               # Dropdown select
+│   │   ├── Input.tsx                # Input field
+│   │   ├── Switch.tsx               # Toggle switch
+│   │   ├── Pagination.tsx           # Pagination
+│   │   └── SearchInput.tsx          # Search input
 │   ├── users/
-│   │   ├── UsersPage.tsx            # 用户管理页面
-│   │   ├── UserTable.tsx            # 用户表格
-│   │   └── UserModal.tsx            # 用户弹窗
+│   │   ├── UsersPage.tsx            # User management page
+│   │   ├── UserTable.tsx            # User table
+│   │   └── UserModal.tsx            # User modal
 │   ├── roles/
-│   │   ├── RolesPage.tsx            # 角色管理页面
-│   │   ├── RoleTable.tsx            # 角色表格
-│   │   └── RoleModal.tsx            # 角色弹窗
+│   │   ├── RolesPage.tsx            # Role management page
+│   │   ├── RoleTable.tsx            # Role table
+│   │   └── RoleModal.tsx            # Role modal
 │   ├── permissions/
-│   │   ├── PermissionsPage.tsx      # 权限管理页面
-│   │   ├── PermissionTable.tsx      # 权限表格
-│   │   └── PermissionModal.tsx      # 权限弹窗
+│   │   ├── PermissionsPage.tsx      # Permission management page
+│   │   ├── PermissionTable.tsx      # Permission table
+│   │   └── PermissionModal.tsx      # Permission modal
 │   └── logs/
-│       └── LogsPage.tsx             # 操作日志页面
+│       └── LogsPage.tsx             # Operation logs page
 ├── types/
-│   └── index.ts                     # 实体类型
+│   └── index.ts                     # Entity types
 ├── utils/
-│   ├── permissions.ts               # 权限计算
-│   └── formatters.ts                # 日期格式化
+│   ├── permissions.ts               # Permission calculation
+│   └── formatters.ts                # Date formatting
 └── hooks/
-    └── usePermissions.ts            # 权限判断 hook
+    └── usePermissions.ts            # Permission check hook
 ```
 
 ---
 
-## 依赖安装
+## Dependency Installation
 
-- [ ] **Step 1: 安装额外依赖**
+- [ ] **Step 1: Install additional dependencies**
 
 Run:
 ```bash
@@ -77,13 +77,13 @@ npm install @tanstack/react-table date-fns react-router-dom
 
 ---
 
-## Task 1: 全局样式与 CSS 变量
+## Task 1: Global Styles and CSS Variables
 
 **Files:**
 - Modify: `src/index.css`
 - Modify: `tailwind.config.js`
 
-- [ ] **Step 1: 更新 `src/index.css` — 全局样式**
+- [ ] **Step 1: Update `src/index.css` — Global styles**
 
 ```css
 @import "tailwindcss";
@@ -114,13 +114,13 @@ body {
   padding: 0;
 }
 
-/* 移除 input/button 默认样式重置 */
+/* Remove default input/button style resets */
 input, button, select, textarea {
   font-family: inherit;
 }
 ```
 
-- [ ] **Step 2: 更新 `tailwind.config.js`**
+- [ ] **Step 2: Update `tailwind.config.js`**
 
 ```js
 /** @type {import('tailwindcss').Config} */
@@ -142,7 +142,7 @@ export default {
 }
 ```
 
-- [ ] **Step 3: 提交**
+- [ ] **Step 3: Commit**
 
 ```bash
 git add src/index.css tailwind.config.js
@@ -151,12 +151,12 @@ git commit -m "feat: add global styles and Tailwind config for enterprise theme"
 
 ---
 
-## Task 2: 类型定义
+## Task 2: Type Definitions
 
 **Files:**
-- Modify: `src/types/index.ts` (覆盖旧文件)
+- Modify: `src/types/index.ts` (overwrite old file)
 
-- [ ] **Step 1: 写入 `src/types/index.ts`**
+- [ ] **Step 1: Write `src/types/index.ts`**
 
 ```typescript
 export type Permission = 'READ' | 'WRITE' | 'DELETE' | 'ADMIN';
@@ -225,7 +225,7 @@ export interface AppState {
 }
 ```
 
-- [ ] **Step 2: 提交**
+- [ ] **Step 2: Commit**
 
 ```bash
 git add src/types/index.ts
@@ -234,45 +234,45 @@ git commit -m "feat: update entity types for enterprise RBAC admin"
 
 ---
 
-## Task 3: 预设数据与 Zustand Store
+## Task 3: Seed Data and Zustand Store
 
 **Files:**
 - Modify: `src/mocks/data/seed.ts`
 - Modify: `src/store/useStore.ts`
 
-- [ ] **Step 1: 更新 `src/mocks/data/seed.ts`**
+- [ ] **Step 1: Update `src/mocks/data/seed.ts`**
 
 ```typescript
 import type { User, Role, PermissionEntity, OperationLog } from '../../types';
 
 export const SEED_PERMISSIONS: PermissionEntity[] = [
-  { id: 'p1', name: '读取', key: 'READ' },
-  { id: 'p2', name: '创建', key: 'WRITE' },
-  { id: 'p3', name: '更新', key: 'WRITE' },
-  { id: 'p4', name: '删除', key: 'DELETE' },
+  { id: 'p1', name: 'Read', key: 'READ' },
+  { id: 'p2', name: 'Create', key: 'WRITE' },
+  { id: 'p3', name: 'Update', key: 'WRITE' },
+  { id: 'p4', name: 'Delete', key: 'DELETE' },
 ];
 
 export const SEED_ROLES: Role[] = [
-  { id: 'r1', name: '超级管理员', permissionIds: ['p1', 'p2', 'p3', 'p4'], createdAt: '2024-01-01 00:00:00' },
-  { id: 'r2', name: '查看者', permissionIds: ['p1'], createdAt: '2024-01-02 00:00:00' },
-  { id: 'r3', name: '编辑者', permissionIds: ['p1', 'p2', 'p3'], createdAt: '2024-01-03 00:00:00' },
+  { id: 'r1', name: 'Super Administrator', permissionIds: ['p1', 'p2', 'p3', 'p4'], createdAt: '2024-01-01 00:00:00' },
+  { id: 'r2', name: 'Viewer', permissionIds: ['p1'], createdAt: '2024-01-02 00:00:00' },
+  { id: 'r3', name: 'Editor', permissionIds: ['p1', 'p2', 'p3'], createdAt: '2024-01-03 00:00:00' },
 ];
 
 export const SEED_USERS: User[] = [
   { id: 'u1', name: 'admin', roleIds: ['r1'], permissionIds: [], status: 'active', createdAt: '2024-01-01 00:00:00' },
-  { id: 'u2', name: '张三', roleIds: ['r2'], permissionIds: [], status: 'active', createdAt: '2024-01-15 10:30:00' },
-  { id: 'u3', name: '李四', roleIds: ['r3'], permissionIds: [], status: 'active', createdAt: '2024-02-01 14:20:00' },
-  { id: 'u4', name: '王五', roleIds: [], permissionIds: [], status: 'inactive', createdAt: '2024-03-10 09:00:00' },
+  { id: 'u2', name: 'Zhang San', roleIds: ['r2'], permissionIds: [], status: 'active', createdAt: '2024-01-15 10:30:00' },
+  { id: 'u3', name: 'Li Si', roleIds: ['r3'], permissionIds: [], status: 'active', createdAt: '2024-02-01 14:20:00' },
+  { id: 'u4', name: 'Wang Wu', roleIds: [], permissionIds: [], status: 'inactive', createdAt: '2024-03-10 09:00:00' },
 ];
 
 export const SEED_LOGS: OperationLog[] = [
-  { id: 'l1', timestamp: '2024-03-15 14:30:00', operator: 'admin', action: 'create', targetType: 'user', targetName: '王五', detail: '新建用户王五' },
-  { id: 'l2', timestamp: '2024-03-15 15:00:00', operator: 'admin', action: 'assign', targetType: 'role', targetName: '编辑者', detail: '为用户李四分配角色编辑者' },
-  { id: 'l3', timestamp: '2024-03-16 09:15:00', operator: 'admin', action: 'delete', targetType: 'user', targetName: '测试用户', detail: '删除用户测试用户' },
+  { id: 'l1', timestamp: '2024-03-15 14:30:00', operator: 'admin', action: 'create', targetType: 'user', targetName: 'Wang Wu', detail: 'Created user Wang Wu' },
+  { id: 'l2', timestamp: '2024-03-15 15:00:00', operator: 'admin', action: 'assign', targetType: 'role', targetName: 'Editor', detail: 'Assigned role Editor to user Li Si' },
+  { id: 'l3', timestamp: '2024-03-16 09:15:00', operator: 'admin', action: 'delete', targetType: 'user', targetName: 'Test User', detail: 'Deleted user Test User' },
 ];
 ```
 
-- [ ] **Step 2: 更新 `src/store/useStore.ts`**
+- [ ] **Step 2: Update `src/store/useStore.ts`**
 
 ```typescript
 import { create } from 'zustand';
@@ -299,7 +299,7 @@ export const useStore = create<AppState>((set, get) => ({
       createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
     };
     set((state) => ({ users: [...state.users, newUser] }));
-    get().addLog(`创建用户: ${user.name}`);
+    get().addLog(`Created user: ${user.name}`);
   },
 
   updateUser: (id, data) => {
@@ -307,7 +307,7 @@ export const useStore = create<AppState>((set, get) => ({
       users: state.users.map((u) => (u.id === id ? { ...u, ...data } : u)),
     }));
     const name = get().users.find((u) => u.id === id)?.name;
-    get().addLog(`更新用户: ${name}`);
+    get().addLog(`Updated user: ${name}`);
   },
 
   deleteUser: (id) => {
@@ -315,7 +315,7 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       users: state.users.filter((u) => u.id !== id),
     }));
-    get().addLog(`删除用户: ${user?.name}`);
+    get().addLog(`Deleted user: ${user?.name}`);
   },
 
   addRole: (role) => {
@@ -325,7 +325,7 @@ export const useStore = create<AppState>((set, get) => ({
       createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
     };
     set((state) => ({ roles: [...state.roles, newRole] }));
-    get().addLog(`创建角色: ${role.name}`);
+    get().addLog(`Created role: ${role.name}`);
   },
 
   updateRole: (id, data) => {
@@ -333,7 +333,7 @@ export const useStore = create<AppState>((set, get) => ({
       roles: state.roles.map((r) => (r.id === id ? { ...r, ...data } : r)),
     }));
     const name = get().roles.find((r) => r.id === id)?.name;
-    get().addLog(`更新角色: ${name}`);
+    get().addLog(`Updated role: ${name}`);
   },
 
   deleteRole: (id) => {
@@ -341,13 +341,13 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       roles: state.roles.filter((r) => r.id !== id),
     }));
-    get().addLog(`删除角色: ${role?.name}`);
+    get().addLog(`Deleted role: ${role?.name}`);
   },
 
   addPermission: (permission) => {
     const newPerm: PermissionEntity = { ...permission, id: generateId() };
     set((state) => ({ permissions: [...state.permissions, newPerm] }));
-    get().addLog(`创建权限: ${permission.name}`);
+    get().addLog(`Created permission: ${permission.name}`);
   },
 
   updatePermission: (id, data) => {
@@ -361,7 +361,7 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       permissions: state.permissions.filter((p) => p.id !== id),
     }));
-    get().addLog(`删除权限: ${perm?.name}`);
+    get().addLog(`Deleted permission: ${perm?.name}`);
   },
 
   assignRoles: (userId, roleIds) => {
@@ -369,7 +369,7 @@ export const useStore = create<AppState>((set, get) => ({
       users: state.users.map((u) => (u.id === userId ? { ...u, roleIds } : u)),
     }));
     const userName = get().users.find((u) => u.id === userId)?.name;
-    get().addLog(`分配角色: ${userName}`);
+    get().addLog(`Assigned roles: ${userName}`);
   },
 
   assignPermissions: (roleId, permissionIds) => {
@@ -377,7 +377,7 @@ export const useStore = create<AppState>((set, get) => ({
       roles: state.roles.map((r) => (r.id === roleId ? { ...r, permissionIds } : r)),
     }));
     const roleName = get().roles.find((r) => r.id === roleId)?.name;
-    get().addLog(`分配权限: ${roleName}`);
+    get().addLog(`Assigned permissions: ${roleName}`);
   },
 
   addLog: (message) =>
@@ -387,7 +387,7 @@ export const useStore = create<AppState>((set, get) => ({
 }));
 ```
 
-- [ ] **Step 3: 提交**
+- [ ] **Step 3: Commit**
 
 ```bash
 git add src/mocks/data/seed.ts src/store/useStore.ts
@@ -396,14 +396,14 @@ git commit -m "feat: update seed data and Zustand store for enterprise RBAC"
 
 ---
 
-## Task 4: 布局组件 — Header, Sidebar, Layout
+## Task 4: Layout Components — Header, Sidebar, Layout
 
 **Files:**
 - Create: `src/components/Layout/Header.tsx`
 - Create: `src/components/Layout/Sidebar.tsx`
 - Create: `src/components/Layout/Layout.tsx`
 
-- [ ] **Step 1: 写入 `src/components/Layout/Header.tsx`**
+- [ ] **Step 1: Write `src/components/Layout/Header.tsx`**
 
 ```tsx
 import { useStore } from '../../store/useStore';
@@ -415,28 +415,28 @@ export function Header() {
         <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
           <span className="text-white font-bold text-sm">RB</span>
         </div>
-        <h1 className="text-base font-semibold text-gray-900">权限管理系统</h1>
+        <h1 className="text-base font-semibold text-gray-900">Permission Management</h1>
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-500">当前用户: admin</span>
-        <button className="text-sm text-gray-500 hover:text-gray-700">退出</button>
+        <span className="text-sm text-gray-500">Current User: admin</span>
+        <button className="text-sm text-gray-500 hover:text-gray-700">Logout</button>
       </div>
     </header>
   );
 }
 ```
 
-- [ ] **Step 2: 写入 `src/components/Layout/Sidebar.tsx`**
+- [ ] **Step 2: Write `src/components/Layout/Sidebar.tsx`**
 
 ```tsx
 import { NavLink } from 'react-router-dom';
 
 const navItems = [
-  { path: '/users', label: '用户管理', icon: UsersIcon },
-  { path: '/roles', label: '角色管理', icon: ShieldIcon },
-  { path: '/permissions', label: '权限管理', icon: KeyIcon },
-  { path: '/logs', label: '操作日志', icon: ClipboardIcon },
+  { path: '/users', label: 'User Management', icon: UsersIcon },
+  { path: '/roles', label: 'Role Management', icon: ShieldIcon },
+  { path: '/permissions', label: 'Permission Management', icon: KeyIcon },
+  { path: '/logs', label: 'Operation Logs', icon: ClipboardIcon },
 ];
 
 export function Sidebar() {
@@ -468,7 +468,7 @@ export function Sidebar() {
           </div>
           <div>
             <p className="text-sm text-white">admin</p>
-            <p className="text-xs text-white/50">超级管理员</p>
+            <p className="text-xs text-white/50">Super Administrator</p>
           </div>
         </div>
       </div>
@@ -509,7 +509,7 @@ function ClipboardIcon({ className }: { className?: string }) {
 }
 ```
 
-- [ ] **Step 3: 写入 `src/components/Layout/Layout.tsx`**
+- [ ] **Step 3: Write `src/components/Layout/Layout.tsx`**
 
 ```tsx
 import { Outlet } from 'react-router-dom';
@@ -531,7 +531,7 @@ export function Layout() {
 }
 ```
 
-- [ ] **Step 4: 提交**
+- [ ] **Step 4: Commit**
 
 ```bash
 git add src/components/Layout/Header.tsx src/components/Layout/Sidebar.tsx src/components/Layout/Layout.tsx
@@ -540,7 +540,7 @@ git commit -m "feat: add Layout components (Header, Sidebar, Layout)"
 
 ---
 
-## Task 5: 基础 UI 组件
+## Task 5: Base UI Components
 
 **Files:**
 - Create: `src/components/ui/Button.tsx`
@@ -552,7 +552,7 @@ git commit -m "feat: add Layout components (Header, Sidebar, Layout)"
 - Create: `src/components/ui/Switch.tsx`
 - Create: `src/components/ui/Pagination.tsx`
 
-- [ ] **Step 1: 写入 `src/components/ui/Button.tsx`**
+- [ ] **Step 1: Write `src/components/ui/Button.tsx`**
 
 ```tsx
 import { ButtonHTMLAttributes } from 'react';
@@ -593,7 +593,7 @@ export function Button({
 }
 ```
 
-- [ ] **Step 2: 写入 `src/components/ui/Badge.tsx`**
+- [ ] **Step 2: Write `src/components/ui/Badge.tsx`**
 
 ```tsx
 interface BadgeProps {
@@ -617,7 +617,7 @@ export function Badge({ variant = 'default', children }: BadgeProps) {
 }
 ```
 
-- [ ] **Step 3: 写入 `src/components/ui/Tag.tsx`**
+- [ ] **Step 3: Write `src/components/ui/Tag.tsx`**
 
 ```tsx
 interface TagProps {
@@ -645,7 +645,7 @@ export function Tag({ children, color = 'gray', onRemove }: TagProps) {
 }
 ```
 
-- [ ] **Step 4: 写入 `src/components/ui/Modal.tsx`**
+- [ ] **Step 4: Write `src/components/ui/Modal.tsx`**
 
 ```tsx
 import { Fragment } from 'react';
@@ -706,7 +706,7 @@ export function Modal({ isOpen, onClose, title, children, footer }: ModalProps) 
 }
 ```
 
-- [ ] **Step 5: 写入 `src/components/ui/Input.tsx`**
+- [ ] **Step 5: Write `src/components/ui/Input.tsx`**
 
 ```tsx
 import { InputHTMLAttributes, forwardRef } from 'react';
@@ -737,7 +737,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = 'Input';
 ```
 
-- [ ] **Step 6: 写入 `src/components/ui/Select.tsx`**
+- [ ] **Step 6: Write `src/components/ui/Select.tsx`**
 
 ```tsx
 import { Fragment } from 'react';
@@ -757,7 +757,7 @@ interface SelectProps {
   placeholder?: string;
 }
 
-export function Select({ label, value, onChange, options, multiple = true, placeholder = '选择...' }: SelectProps) {
+export function Select({ label, value, onChange, options, multiple = true, placeholder = 'Select...' }: SelectProps) {
   return (
     <div>
       {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
@@ -767,7 +767,7 @@ export function Select({ label, value, onChange, options, multiple = true, place
             {value.length === 0 ? (
               <span className="text-gray-400">{placeholder}</span>
             ) : (
-              <span>{value.length} 项已选</span>
+              <span>{value.length} selected</span>
             )}
           </Listbox.Button>
           <Transition
@@ -807,7 +807,7 @@ export function Select({ label, value, onChange, options, multiple = true, place
 }
 ```
 
-- [ ] **Step 7: 写入 `src/components/ui/Switch.tsx`**
+- [ ] **Step 7: Write `src/components/ui/Switch.tsx`**
 
 ```tsx
 import { Switch as HeadlessSwitch } from '@headlessui/react';
@@ -836,7 +836,7 @@ export function Switch({ checked, onChange, label }: SwitchProps) {
 }
 ```
 
-- [ ] **Step 8: 写入 `src/components/ui/Pagination.tsx`**
+- [ ] **Step 8: Write `src/components/ui/Pagination.tsx`**
 
 ```tsx
 interface PaginationProps {
@@ -855,7 +855,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         disabled={currentPage === 1}
         className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        上一页
+        Previous
       </button>
 
       {pages.map((page) => (
@@ -877,14 +877,14 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         disabled={currentPage === totalPages}
         className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        下一页
+        Next
       </button>
     </div>
   );
 }
 ```
 
-- [ ] **Step 9: 提交**
+- [ ] **Step 9: Commit**
 
 ```bash
 git add src/components/ui/Button.tsx src/components/ui/Badge.tsx src/components/ui/Tag.tsx src/components/ui/Modal.tsx src/components/ui/Input.tsx src/components/ui/Select.tsx src/components/ui/Switch.tsx src/components/ui/Pagination.tsx
@@ -893,14 +893,14 @@ git commit -m "feat: add base UI components (Button, Badge, Tag, Modal, Input, S
 
 ---
 
-## Task 6: 用户管理页面
+## Task 6: User Management Page
 
 **Files:**
 - Create: `src/components/users/UsersPage.tsx`
 - Create: `src/components/users/UserTable.tsx`
 - Create: `src/components/users/UserModal.tsx`
 
-- [ ] **Step 1: 写入 `src/components/users/UserModal.tsx`**
+- [ ] **Step 1: Write `src/components/users/UserModal.tsx`**
 
 ```tsx
 import { useState, useEffect } from 'react';
@@ -971,39 +971,39 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={user ? '编辑用户' : '新增用户'}
+      title={user ? 'Edit User' : 'Add User'}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>取消</Button>
-          <Button onClick={handleSubmit} disabled={!name.trim()}>{user ? '保存' : '创建'}</Button>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={!name.trim()}>{user ? 'Save' : 'Create'}</Button>
         </>
       }
     >
       <div className="space-y-4">
         <Input
-          label="用户名"
+          label="Username"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="请输入用户名"
+          placeholder="Enter username"
           maxLength={20}
         />
         <Select
-          label="角色分配"
+          label="Role Assignment"
           value={roleIds}
           onChange={setRoleIds}
           options={roleOptions}
-          placeholder="选择角色"
+          placeholder="Select roles"
         />
         <Select
-          label="直接权限"
+          label="Direct Permissions"
           value={permissionIds}
           onChange={setPermissionIds}
           options={permOptions}
-          placeholder="选择权限"
+          placeholder="Select permissions"
         />
         <div className="flex items-center gap-3">
           <Switch checked={status} onChange={setStatus} />
-          <span className="text-sm text-gray-700">{status ? '启用' : '禁用'}</span>
+          <span className="text-sm text-gray-700">{status ? 'Enabled' : 'Disabled'}</span>
         </div>
       </div>
     </Modal>
@@ -1011,7 +1011,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
 }
 ```
 
-- [ ] **Step 2: 写入 `src/components/users/UserTable.tsx`**
+- [ ] **Step 2: Write `src/components/users/UserTable.tsx`**
 
 ```tsx
 import { useState } from 'react';
@@ -1041,12 +1041,12 @@ export function UserTable() {
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-10">
               <input type="checkbox" className="rounded border-gray-300" />
             </th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">用户名</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">所属角色</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">直接权限</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">状态</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">创建时间</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Username</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Assigned Roles</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Direct Permissions</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created At</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -1074,14 +1074,14 @@ export function UserTable() {
               </td>
               <td className="px-4 py-3">
                 <Badge variant={user.status === 'active' ? 'success' : 'warning'}>
-                  {user.status === 'active' ? '启用' : '禁用'}
+                  {user.status === 'active' ? 'Enabled' : 'Disabled'}
                 </Badge>
               </td>
               <td className="px-4 py-3 text-sm text-gray-500">{user.createdAt}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm">编辑</Button>
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">删除</Button>
+                  <Button variant="ghost" size="sm">Edit</Button>
+                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">Delete</Button>
                 </div>
               </td>
             </tr>
@@ -1093,7 +1093,7 @@ export function UserTable() {
 }
 ```
 
-- [ ] **Step 3: 写入 `src/components/users/UsersPage.tsx`**
+- [ ] **Step 3: Write `src/components/users/UsersPage.tsx`**
 
 ```tsx
 import { useState } from 'react';
@@ -1124,14 +1124,14 @@ export function UsersPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">用户管理</h2>
+        <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="搜索用户名..."
+            placeholder="Search username..."
             className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
-          <Button onClick={handleAdd}>+ 新增用户</Button>
+          <Button onClick={handleAdd}>+ Add User</Button>
         </div>
       </div>
 
@@ -1143,7 +1143,7 @@ export function UsersPage() {
 }
 ```
 
-- [ ] **Step 4: 提交**
+- [ ] **Step 4: Commit**
 
 ```bash
 git add src/components/users/UsersPage.tsx src/components/users/UserTable.tsx src/components/users/UserModal.tsx
@@ -1152,14 +1152,14 @@ git commit -m "feat: add users management page"
 
 ---
 
-## Task 7: 角色管理页面
+## Task 7: Role Management Page
 
 **Files:**
 - Create: `src/components/roles/RolesPage.tsx`
 - Create: `src/components/roles/RoleTable.tsx`
 - Create: `src/components/roles/RoleModal.tsx`
 
-- [ ] **Step 1: 写入 `src/components/roles/RoleModal.tsx`**
+- [ ] **Step 1: Write `src/components/roles/RoleModal.tsx`**
 
 ```tsx
 import { useState, useEffect } from 'react';
@@ -1211,28 +1211,28 @@ export function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={role ? '编辑角色' : '新增角色'}
+      title={role ? 'Edit Role' : 'Add Role'}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>取消</Button>
-          <Button onClick={handleSubmit} disabled={!name.trim()}>{role ? '保存' : '创建'}</Button>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={!name.trim()}>{role ? 'Save' : 'Create'}</Button>
         </>
       }
     >
       <div className="space-y-4">
         <Input
-          label="角色名称"
+          label="Role Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="请输入角色名称"
+          placeholder="Enter role name"
           maxLength={20}
         />
         <Select
-          label="权限分配"
+          label="Permission Assignment"
           value={permissionIds}
           onChange={setPermissionIds}
           options={permOptions}
-          placeholder="选择权限"
+          placeholder="Select permissions"
         />
       </div>
     </Modal>
@@ -1240,7 +1240,7 @@ export function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
 }
 ```
 
-- [ ] **Step 2: 写入 `src/components/roles/RoleTable.tsx`**
+- [ ] **Step 2: Write `src/components/roles/RoleTable.tsx`**
 
 ```tsx
 import { useStore } from '../../store/useStore';
@@ -1266,11 +1266,11 @@ export function RoleTable() {
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-10">
               <input type="checkbox" className="rounded border-gray-300" />
             </th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">角色名称</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">权限列表</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">关联用户数</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">创建时间</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role Name</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Permission List</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Assigned User Count</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created At</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -1291,8 +1291,8 @@ export function RoleTable() {
               <td className="px-4 py-3 text-sm text-gray-500">{role.createdAt}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm">编辑</Button>
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">删除</Button>
+                  <Button variant="ghost" size="sm">Edit</Button>
+                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">Delete</Button>
                 </div>
               </td>
             </tr>
@@ -1304,7 +1304,7 @@ export function RoleTable() {
 }
 ```
 
-- [ ] **Step 3: 写入 `src/components/roles/RolesPage.tsx`**
+- [ ] **Step 3: Write `src/components/roles/RolesPage.tsx`**
 
 ```tsx
 import { useState } from 'react';
@@ -1335,14 +1335,14 @@ export function RolesPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">角色管理</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Role Management</h2>
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="搜索角色名..."
+            placeholder="Search role name..."
             className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
-          <Button onClick={handleAdd}>+ 新增角色</Button>
+          <Button onClick={handleAdd}>+ Add Role</Button>
         </div>
       </div>
 
@@ -1354,7 +1354,7 @@ export function RolesPage() {
 }
 ```
 
-- [ ] **Step 4: 提交**
+- [ ] **Step 4: Commit**
 
 ```bash
 git add src/components/roles/RolesPage.tsx src/components/roles/RoleTable.tsx src/components/roles/RoleModal.tsx
@@ -1363,14 +1363,14 @@ git commit -m "feat: add roles management page"
 
 ---
 
-## Task 8: 权限管理页面
+## Task 8: Permission Management Page
 
 **Files:**
 - Create: `src/components/permissions/PermissionsPage.tsx`
 - Create: `src/components/permissions/PermissionTable.tsx`
 - Create: `src/components/permissions/PermissionModal.tsx`
 
-- [ ] **Step 1: 写入 `src/components/permissions/PermissionModal.tsx`**
+- [ ] **Step 1: Write `src/components/permissions/PermissionModal.tsx`**
 
 ```tsx
 import { useState, useEffect } from 'react';
@@ -1387,10 +1387,10 @@ interface PermissionModalProps {
 }
 
 const PERMISSION_OPTIONS: { key: Permission; label: string }[] = [
-  { key: 'READ', label: '读取 (READ)' },
-  { key: 'WRITE', label: '写入 (WRITE)' },
-  { key: 'DELETE', label: '删除 (DELETE)' },
-  { key: 'ADMIN', label: '管理 (ADMIN)' },
+  { key: 'READ', label: 'Read (READ)' },
+  { key: 'WRITE', label: 'Write (WRITE)' },
+  { key: 'DELETE', label: 'Delete (DELETE)' },
+  { key: 'ADMIN', label: 'Admin (ADMIN)' },
 ];
 
 export function PermissionModal({ isOpen, onClose, permission }: PermissionModalProps) {
@@ -1425,24 +1425,24 @@ export function PermissionModal({ isOpen, onClose, permission }: PermissionModal
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={permission ? '编辑权限' : '新增权限'}
+      title={permission ? 'Edit Permission' : 'Add Permission'}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>取消</Button>
-          <Button onClick={handleSubmit} disabled={!name.trim()}>{permission ? '保存' : '创建'}</Button>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={!name.trim()}>{permission ? 'Save' : 'Create'}</Button>
         </>
       }
     >
       <div className="space-y-4">
         <Input
-          label="权限名称"
+          label="Permission Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="如：用户管理"
+          placeholder="e.g., User Management"
           maxLength={20}
         />
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">权限标识</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Permission Key</label>
           <select
             value={key}
             onChange={(e) => setKey(e.target.value as Permission)}
@@ -1459,7 +1459,7 @@ export function PermissionModal({ isOpen, onClose, permission }: PermissionModal
 }
 ```
 
-- [ ] **Step 2: 写入 `src/components/permissions/PermissionTable.tsx`**
+- [ ] **Step 2: Write `src/components/permissions/PermissionTable.tsx`**
 
 ```tsx
 import { useStore } from '../../store/useStore';
@@ -1481,10 +1481,10 @@ export function PermissionTable() {
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-10">
               <input type="checkbox" className="rounded border-gray-300" />
             </th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">权限名称</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">权限标识</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">关联角色数</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Permission Name</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Permission Key</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Assigned Role Count</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -1500,8 +1500,8 @@ export function PermissionTable() {
               <td className="px-4 py-3 text-sm text-gray-500">{getRoleCount(perm.id)}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm">编辑</Button>
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">删除</Button>
+                  <Button variant="ghost" size="sm">Edit</Button>
+                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">Delete</Button>
                 </div>
               </td>
             </tr>
@@ -1513,7 +1513,7 @@ export function PermissionTable() {
 }
 ```
 
-- [ ] **Step 3: 写入 `src/components/permissions/PermissionsPage.tsx`**
+- [ ] **Step 3: Write `src/components/permissions/PermissionsPage.tsx`**
 
 ```tsx
 import { useState } from 'react';
@@ -1544,14 +1544,14 @@ export function PermissionsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">权限管理</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Permission Management</h2>
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="搜索权限..."
+            placeholder="Search permission..."
             className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
-          <Button onClick={handleAdd}>+ 新增权限</Button>
+          <Button onClick={handleAdd}>+ Add Permission</Button>
         </div>
       </div>
 
@@ -1563,7 +1563,7 @@ export function PermissionsPage() {
 }
 ```
 
-- [ ] **Step 4: 提交**
+- [ ] **Step 4: Commit**
 
 ```bash
 git add src/components/permissions/PermissionsPage.tsx src/components/permissions/PermissionTable.tsx src/components/permissions/PermissionModal.tsx
@@ -1572,12 +1572,12 @@ git commit -m "feat: add permissions management page"
 
 ---
 
-## Task 9: 操作日志页面
+## Task 9: Operation Logs Page
 
 **Files:**
 - Create: `src/components/logs/LogsPage.tsx`
 
-- [ ] **Step 1: 写入 `src/components/logs/LogsPage.tsx`**
+- [ ] **Step 1: Write `src/components/logs/LogsPage.tsx`**
 
 ```tsx
 import { useStore } from '../../store/useStore';
@@ -1595,18 +1595,18 @@ export function LogsPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-gray-900">操作日志</h2>
+      <h2 className="text-lg font-semibold text-gray-900">Operation Logs</h2>
 
       <div className="overflow-x-auto">
         <table className="w-full bg-white rounded-lg shadow">
           <thead>
             <tr className="border-b border-gray-200">
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作时间</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作者</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作类型</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">目标类型</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">目标名称</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">详情</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Operation Time</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Operator</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Operation Type</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Target Type</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Target Name</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Detail</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -1630,7 +1630,7 @@ export function LogsPage() {
 }
 ```
 
-- [ ] **Step 2: 提交**
+- [ ] **Step 2: Commit**
 
 ```bash
 git add src/components/logs/LogsPage.tsx
@@ -1639,13 +1639,13 @@ git commit -m "feat: add operation logs page"
 
 ---
 
-## Task 10: 应用路由与根组件
+## Task 10: App Routing and Root Component
 
 **Files:**
 - Modify: `src/App.tsx`
 - Modify: `src/main.tsx`
 
-- [ ] **Step 1: 更新 `src/App.tsx`**
+- [ ] **Step 1: Update `src/App.tsx`**
 
 ```tsx
 import { HashRouter, Routes, Route } from 'react-router-dom';
@@ -1674,7 +1674,7 @@ function App() {
 export default App;
 ```
 
-- [ ] **Step 2: 更新 `src/main.tsx`**
+- [ ] **Step 2: Update `src/main.tsx`**
 
 ```tsx
 import { StrictMode } from 'react';
@@ -1698,7 +1698,7 @@ enableMocking().then(() => {
 });
 ```
 
-- [ ] **Step 3: 提交**
+- [ ] **Step 3: Commit**
 
 ```bash
 git add src/App.tsx src/main.tsx
@@ -1707,12 +1707,12 @@ git commit -m "feat: wire up routing and root component"
 
 ---
 
-## Task 11: 更新 MSW handlers
+## Task 11: Update MSW Handlers
 
 **Files:**
 - Modify: `src/mocks/handlers/index.ts`
 
-- [ ] **Step 1: 更新 `src/mocks/handlers/index.ts`**
+- [ ] **Step 1: Update `src/mocks/handlers/index.ts`**
 
 ```typescript
 import { http, HttpResponse, delay } from 'msw';
@@ -1818,7 +1818,7 @@ export const handlers = [
 ];
 ```
 
-- [ ] **Step 2: 提交**
+- [ ] **Step 2: Commit**
 
 ```bash
 git add src/mocks/handlers/index.ts
@@ -1827,26 +1827,26 @@ git commit -m "feat: update MSW handlers for enterprise RBAC"
 
 ---
 
-## 最终检查
+## Final Checklist
 
-### 自检清单
+### Self-Check
 
-- [ ] Spec 覆盖：每个设计需求都有对应实现
-- [ ] 占位符扫描：无 TBD、TODO、未完成部分
-- [ ] 类型一致性：类型定义、函数签名在所有任务中一致
-- [ ] 文件路径：所有路径精确，无歧义
+- [ ] Spec coverage: Every design requirement has corresponding implementation
+- [ ] Placeholder scan: No TBD, TODO, or incomplete sections
+- [ ] Type consistency: Type definitions and function signatures consistent across all tasks
+- [ ] File paths: All paths precise, no ambiguity
 
-### 验证方式
+### Verification
 
-1. `npm run dev` 启动开发服务器
-2. 访问 http://localhost:5173/#/users 查看用户管理
-3. 验证侧边栏导航正常工作
-4. 测试新增用户/角色/权限功能
-5. 测试表格的增删改操作
+1. `npm run dev` to start dev server
+2. Visit http://localhost:5173/#/users to view user management
+3. Verify sidebar navigation works
+4. Test add user/role/permission functionality
+5. Test table CRUD operations
 
 ---
 
-## 执行选择
+## Execution Options
 
 **Plan complete and saved to `docs/superpowers/plans/2026-05-02-rbac-admin.md`. Two execution options:**
 
