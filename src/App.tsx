@@ -5,6 +5,7 @@ import { RolesPage } from './components/roles/RolesPage';
 import { PermissionsPage } from './components/permissions/PermissionsPage';
 import { LogsPage } from './components/logs/LogsPage';
 import { LoginPage } from './components/login/LoginPage';
+import { DashboardPage } from './components/dashboard/DashboardPage';
 import { getTokens } from './api';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -26,6 +27,7 @@ function App() {
           }
         >
           <Route index element={<UsersPage />} />
+          <Route path="home" element={<DashboardPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="roles" element={<RolesPage />} />
           <Route path="permissions" element={<PermissionsPage />} />

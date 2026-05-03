@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const navItems = [
   { path: '/users', label: 'Users', icon: UsersIcon },
@@ -8,9 +8,16 @@ const navItems = [
 ];
 
 export function Sidebar() {
+  const navigate = useNavigate();
   return (
     <aside className="w-[220px] bg-sidebar flex flex-col h-full">
       <div className="flex-1 py-4">
+        <div className="px-4 py-3 border-b border-white/10 mb-2">
+          <p className="text-xs text-white/50 uppercase tracking-wider mb-2">Quick Nav</p>
+          <button onClick={() => navigate('/users')} className="block w-full px-2 py-1.5 text-sm text-white/70 hover:text-white text-left">Users</button>
+          <button onClick={() => navigate('/roles')} className="block w-full px-2 py-1.5 text-sm text-white/70 hover:text-white text-left">Roles</button>
+          <button onClick={() => navigate('/permissions')} className="block w-full px-2 py-1.5 text-sm text-white/70 hover:text-white text-left">Permissions</button>
+        </div>
         {navItems.map((item) => (
           <NavLink
             key={item.path}
