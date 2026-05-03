@@ -16,6 +16,24 @@ npm run lint    # Run ESLint
 npm run preview # Preview production build
 ```
 
+## Docker Dev Mode
+
+```bash
+docker compose up --build   # Start Vite dev server with hot reload
+```
+
+- Source code is copied into container at build time
+- Volume mount `./src:/app/src:ro` enables live code updates
+- Vite dev server runs on port 80 inside container
+- Changes to local `src/` hot-reload automatically
+
+To switch back to production build:
+```bash
+docker compose down
+# edit docker-compose.yml: dockerfile: Dockerfile
+docker compose up --build
+```
+
 ## Architecture
 
 ### Tech Stack
@@ -58,4 +76,4 @@ Shared components in `src/components/ui/` (Button, Modal, Switch, Badge, Tag, Se
 - Access/refresh tokens stored in `localStorage`
 - Local IDs are random strings; backend uses integer IDs (converted in API calls)
 - MSW runs as browser workers — `npm run dev` starts mock automatically when in dev mode
-- Already pushed locally, this is to trigger remote push
+- Dev mode uses Dockerfile.dev + Vite dev server (see Docker Dev Mode above)
