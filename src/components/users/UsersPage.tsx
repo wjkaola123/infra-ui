@@ -13,6 +13,7 @@ export function UsersPage() {
   const usersTotal = useStore((s) => s.usersTotal);
   const usersTotalPages = useStore((s) => s.usersTotalPages);
   const setUsersPage = useStore((s) => s.setUsersPage);
+  const setUsersPageSize = useStore((s) => s.setUsersPageSize);
 
   useEffect(() => {
     setUsersPage(1);
@@ -62,8 +63,19 @@ export function UsersPage() {
 
       {/* Pagination */}
       <div className="flex items-center justify-between px-4 py-3 bg-white rounded-lg shadow">
-        <div className="text-sm text-gray-500">
-          Showing {(usersPage - 1) * usersPageSize + 1} to {Math.min(usersPage * usersPageSize, usersTotal)} of {usersTotal} users
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-gray-500">
+            Showing {(usersPage - 1) * usersPageSize + 1} to {Math.min(usersPage * usersPageSize, usersTotal)} of {usersTotal} users
+          </div>
+          <select
+            value={usersPageSize}
+            onChange={(e) => setUsersPageSize(Number(e.target.value))}
+            className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+          >
+            <option value={10}>10 / page</option>
+            <option value={20}>20 / page</option>
+            <option value={50}>50 / page</option>
+          </select>
         </div>
         <div className="flex items-center gap-2">
           <button

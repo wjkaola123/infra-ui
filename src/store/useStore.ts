@@ -34,6 +34,10 @@ export const useStore = create<AppState>((set, get) => ({
     get().fetchUsersFromApi(page, get().usersPageSize);
   },
 
+  setUsersPageSize: (size: number) => {
+    get().fetchUsersFromApi(1, size);
+  },
+
   setRolesPage: (page) => {
     get().fetchRolesFromApi(page, get().rolesPageSize);
   },
