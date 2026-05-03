@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Rules
+
+- Only focus on the plan and implementation of frontend.
+- If you don't have enough information about backend, ask me to fetch. 
+
 ## Dev Commands
 
 ```bash
