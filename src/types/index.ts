@@ -65,6 +65,7 @@ export interface AppState {
   fetchUsersFromApi: (page?: number, pageSize?: number) => Promise<void>;
   setUsersPage: (page: number) => void;
   setRolesPage: (page: number) => void;
+  setRolesPageSize: (size: number) => void;
   fetchRolesFromApi: (page?: number, pageSize?: number) => Promise<void>;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
   updateUser: (id: string, data: Partial<User>) => void;

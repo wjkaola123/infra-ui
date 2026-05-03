@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserTable } from './UserTable';
 import { UserModal } from './UserModal';
 import { useStore } from '../../store/useStore';
@@ -13,6 +13,10 @@ export function UsersPage() {
   const usersTotal = useStore((s) => s.usersTotal);
   const usersTotalPages = useStore((s) => s.usersTotalPages);
   const setUsersPage = useStore((s) => s.setUsersPage);
+
+  useEffect(() => {
+    setUsersPage(1);
+  }, [setUsersPage]);
 
   const handleEdit = (user: User) => {
     setEditingUser(user);

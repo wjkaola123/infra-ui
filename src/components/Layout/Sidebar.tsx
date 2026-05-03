@@ -9,43 +9,59 @@ const navItems = [
 
 export function Sidebar() {
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    navigate('/login');
+  };
+
   return (
-    <aside className="w-[220px] bg-sidebar flex flex-col h-full">
-      <div className="flex-1 py-4">
-        <div className="px-4 py-3 border-b border-gray-300 mb-2">
-          <p className="text-xs text-gray-600 uppercase tracking-wider mb-2 font-semibold">Quick Nav</p>
-          <button onClick={() => navigate('/users')} className="block w-full px-3 py-2 text-sm text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-md text-left transition-colors mb-1">Users</button>
-          <button onClick={() => navigate('/roles')} className="block w-full px-3 py-2 text-sm text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-md text-left transition-colors mb-1">Roles</button>
-          <button onClick={() => navigate('/permissions')} className="block w-full px-3 py-2 text-sm text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-md text-left transition-colors">Permissions</button>
+    <aside className="w-56 bg-slate-800 flex flex-col h-full">
+      <div className="px-4 py-5 border-b border-slate-700">
+        <h1 className="text-lg font-semibold text-white">Admin Panel</h1>
+      </div>
+
+      <div className="px-4 py-4 border-b border-slate-700">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <span className="text-white text-sm font-medium">A</span>
+          </div>
+          <div>
+            <p className="text-sm text-white font-medium">admin</p>
+            <p className="text-xs text-slate-400">Super Admin</p>
+          </div>
         </div>
+      </div>
+
+      <nav className="flex-1 py-4">
+        <p className="px-4 py-2 text-xs font-medium text-slate-400 uppercase tracking-wider">Menu</p>
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2.5 text-sm ${
+              `flex items-center gap-3 px-4 py-2.5 mx-2 text-sm rounded-lg transition-all duration-150 ${
                 isActive
-                  ? 'bg-white/10 text-white'
-                  : 'text-white/70 hover:bg-white/5 hover:text-white'
+                  ? 'bg-slate-700 text-white'
+                  : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
               }`
             }
           >
-            <item.icon className="w-5 h-5" />
+            <item.icon className="w-5 h-5 opacity-80" />
             {item.label}
           </NavLink>
         ))}
-      </div>
+      </nav>
 
-      <div className="px-4 py-4 border-t border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-            <span className="text-white text-sm">A</span>
-          </div>
-          <div>
-            <p className="text-sm text-white">admin</p>
-            <p className="text-xs text-white/50">Super Admin</p>
-          </div>
-        </div>
+      <div className="px-4 py-4 border-t border-slate-700">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 w-full px-3 py-2 text-sm text-slate-300 hover:bg-slate-700/50 hover:text-white rounded-lg transition-all duration-150"
+        >
+          <LogoutIcon className="w-5 h-5" />
+          Logout
+        </button>
       </div>
     </aside>
   );
@@ -79,6 +95,14 @@ function ClipboardIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+    </svg>
+  );
+}
+
+function LogoutIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
     </svg>
   );
 }

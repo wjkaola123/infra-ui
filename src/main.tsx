@@ -16,7 +16,6 @@ enableMocking().then(() => {
   const tokens = getTokens();
   if (tokens.access) {
     useStore.getState().fetchUsersFromApi();
-    useStore.getState().fetchRolesFromApi();
   }
   createRoot(document.getElementById('root')!).render(
     <StrictMode>

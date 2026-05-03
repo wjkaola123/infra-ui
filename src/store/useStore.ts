@@ -38,6 +38,10 @@ export const useStore = create<AppState>((set, get) => ({
     get().fetchRolesFromApi(page, get().rolesPageSize);
   },
 
+  setRolesPageSize: (size: number) => {
+    get().fetchRolesFromApi(1, size);
+  },
+
   fetchUsersFromApi: async (page = 1, pageSize = 10) => {
     try {
       const paginatedData = await userApi.list({ page, page_size: pageSize });
