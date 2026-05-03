@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { RoleTable } from './RoleTable';
 import { RoleModal } from './RoleModal';
+import { useStore } from '../../store/useStore';
 import type { Role } from '../../types';
 
 export function RolesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
+  const fetchRolesFromApi = useStore((s) => s.fetchRolesFromApi);
+
+  useEffect(() => {
+    fetchRolesFromApi();
+  }, [fetchRolesFromApi]);
 
   const handleEdit = (role: Role) => {
     setEditingRole(role);
