@@ -20,6 +20,7 @@ export function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
   const fetchPermissionsFromApi = useStore((s) => s.fetchPermissionsFromApi);
   const addRole = useStore((s) => s.addRole);
   const updateRole = useStore((s) => s.updateRole);
+  const fetchRolesFromApi = useStore((s) => s.fetchRolesFromApi);
 
   useEffect(() => {
     if (role) {
@@ -37,11 +38,12 @@ export function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
     }
   }, [isOpen]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim()) return;
 
     if (role) {
-      updateRole(role.id, { name: name.trim(), permissionIds });
+      await updateRole(role.id, { name: name.trim(), permissionIds });
+      await fetchRolesFromApi();
     } else {
       addRole({ name: name.trim(), permissionIds });
     }
