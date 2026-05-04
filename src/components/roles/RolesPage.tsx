@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { RoleTable } from './RoleTable';
 import { RoleModal } from './RoleModal';
+import { Pagination } from '../ui/Pagination';
 import { useStore } from '../../store/useStore';
 import { roleApi } from '../../api';
 import type { Role } from '../../types';
@@ -78,66 +79,14 @@ export function RolesPage() {
 
       <RoleTable onEdit={handleEdit} />
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white rounded-lg shadow">
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-500">
-            Showing {(rolesPage - 1) * rolesPageSize + 1} to {Math.min(rolesPage * rolesPageSize, rolesTotal)} of {rolesTotal} roles
-          </div>
-          <select
-            value={rolesPageSize}
-            onChange={(e) => setRolesPageSize(Number(e.target.value))}
-            className="px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-          >
-            <option value={10}>10 / page</option>
-            <option value={20}>20 / page</option>
-            <option value={50}>50 / page</option>
-          </select>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => handlePageChange(rolesPage - 1)}
-            disabled={rolesPage <= 1}
-            className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            Previous
-          </button>
-          <div className="flex items-center gap-1">
-            {Array.from({ length: Math.min(5, rolesTotalPages) }, (_, i) => {
-              let pageNum: number;
-              if (rolesTotalPages <= 5) {
-                pageNum = i + 1;
-              } else if (rolesPage <= 3) {
-                pageNum = i + 1;
-              } else if (rolesPage >= rolesTotalPages - 2) {
-                pageNum = rolesTotalPages - 4 + i;
-              } else {
-                pageNum = rolesPage - 2 + i;
-              }
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => handlePageChange(pageNum)}
-                  className={`px-3 py-1 text-sm rounded-md ${
-                    pageNum === rolesPage
-                      ? 'bg-blue-600 text-white'
-                      : 'border border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  {pageNum}
-                </button>
-              );
-            })}
-          </div>
-          <button
-            onClick={() => handlePageChange(rolesPage + 1)}
-            disabled={rolesPage >= rolesTotalPages}
-            className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            Next
-          </button>
-        </div>
-      </div>
+      <Pagination
+        currentPage={rolesPage}
+        totalPages={rolesTotalPages}
+        totalItems={rolesTotal}
+        pageSize={rolesPageSize}
+        onPageChange={handlePageChange}
+        onPageSizeChange={setRolesPageSize}
+      />
 
       <RoleModal isOpen={modalOpen} onClose={handleClose} role={editingRole} />
     </div>
