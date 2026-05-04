@@ -39,11 +39,18 @@ export const useStore = create<AppState>((set, get) => ({
   },
 
   setRolesPage: (page) => {
-    get().fetchRolesFromApi(page, get().rolesPageSize);
+    get().fetchRolesFromApi(page, get().rolesPageSize, get().rolesNameFilter);
   },
 
   setRolesPageSize: (size: number) => {
-    get().fetchRolesFromApi(1, size);
+    get().fetchRolesFromApi(1, size, get().rolesNameFilter);
+  },
+
+  rolesNameFilter: '',
+
+  setRolesNameFilter: (filter: string) => {
+    set({ rolesNameFilter: filter });
+    get().fetchRolesFromApi(1, get().rolesPageSize, filter);
   },
 
   fetchUsersFromApi: async (page = 1, pageSize = 10) => {
@@ -111,9 +118,9 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  fetchRolesFromApi: async (page = 1, pageSize = 10) => {
+  fetchRolesFromApi: async (page = 1, pageSize = 10, nameFilter?: string) => {
     try {
-      const paginatedData = await roleApi.list({ page, page_size: pageSize });
+      const paginatedData = await roleApi.list({ page, page_size: pageSize, name: nameFilter });
       const mappedRoles = paginatedData.items.map(mapBackendRoleToRole);
 
       // Collect all unique permissions from roles response

@@ -1,4 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+
+function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): T {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return ((...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  }) as T;
+}
 import { RoleTable } from './RoleTable';
 import { RoleModal } from './RoleModal';
 import { Pagination } from '../ui/Pagination';
@@ -10,18 +18,39 @@ export function RolesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState('');
 
   const rolesPage = useStore((s) => s.rolesPage);
   const rolesPageSize = useStore((s) => s.rolesPageSize);
   const rolesTotal = useStore((s) => s.rolesTotal);
   const rolesTotalPages = useStore((s) => s.rolesTotalPages);
+  const rolesNameFilter = useStore((s) => s.rolesNameFilter);
   const setRolesPage = useStore((s) => s.setRolesPage);
   const setRolesPageSize = useStore((s) => s.setRolesPageSize);
+  const setRolesNameFilter = useStore((s) => s.setRolesNameFilter);
   const fetchRolesFromApi = useStore((s) => s.fetchRolesFromApi);
 
   useEffect(() => {
     setRolesPage(1);
   }, [setRolesPage]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    debouncedSetFilter(value);
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSetFilter = useCallback(
+    debounce((value: string) => {
+      setRolesNameFilter(value);
+    }, 300),
+    [setRolesNameFilter]
+  );
+
+  useEffect(() => {
+    setSearchInput(rolesNameFilter);
+  }, [rolesNameFilter]);
 
   const handleEdit = async (role: Role) => {
     try {
@@ -52,7 +81,7 @@ export function RolesPage() {
   const handleSuccess = async (success: boolean, errorMessage?: string) => {
     if (success) {
       setNotification('Role saved successfully');
-      await fetchRolesFromApi();
+      await fetchRolesFromApi(1, rolesPageSize, rolesNameFilter);
     } else {
       setNotification(errorMessage || 'Operation failed');
     }
@@ -83,6 +112,8 @@ export function RolesPage() {
           <input
             type="text"
             placeholder="Search role name..."
+            value={searchInput}
+            onChange={handleSearchChange}
             className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
           <button

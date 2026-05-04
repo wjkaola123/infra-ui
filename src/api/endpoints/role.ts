@@ -34,10 +34,11 @@ export interface ApiResponse<T> {
 }
 
 export const roleApi = {
-  list: async (params?: { page?: number; page_size?: number }): Promise<PaginatedRolesResponse> => {
+  list: async (params?: { page?: number; page_size?: number; name?: string }): Promise<PaginatedRolesResponse> => {
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.set('page', String(params.page));
     if (params?.page_size) searchParams.set('page_size', String(params.page_size));
+    if (params?.name) searchParams.set('name', params.name);
     const queryString = searchParams.toString();
     const url = queryString ? `/roles/?${queryString}` : '/roles/';
     const response = await apiClient.get<ApiResponse<PaginatedRolesResponse>>(url);

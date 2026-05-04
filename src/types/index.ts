@@ -61,6 +61,7 @@ export interface AppState {
   rolesPage: number;
   rolesPageSize: number;
   rolesTotalPages: number;
+  rolesNameFilter: string;
 
   selectEntity: (entity: { id: string; type: EntityType } | null) => void;
   setUsers: (users: User[]) => void;
@@ -69,7 +70,8 @@ export interface AppState {
   setUsersPageSize: (size: number) => void;
   setRolesPage: (page: number) => void;
   setRolesPageSize: (size: number) => void;
-  fetchRolesFromApi: (page?: number, pageSize?: number) => Promise<void>;
+  setRolesNameFilter: (filter: string) => void;
+  fetchRolesFromApi: (page?: number, pageSize?: number, nameFilter?: string) => Promise<void>;
   fetchPermissionsFromApi: () => Promise<void>;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
   updateUser: (id: string, data: Partial<User>) => void;

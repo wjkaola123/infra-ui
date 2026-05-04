@@ -21,7 +21,6 @@ export function RoleModal({ isOpen, onClose, role, onSuccess }: RoleModalProps) 
   const fetchPermissionsFromApi = useStore((s) => s.fetchPermissionsFromApi);
   const addRole = useStore((s) => s.addRole);
   const updateRole = useStore((s) => s.updateRole);
-  const fetchRolesFromApi = useStore((s) => s.fetchRolesFromApi);
 
   useEffect(() => {
     if (role) {
@@ -42,19 +41,14 @@ export function RoleModal({ isOpen, onClose, role, onSuccess }: RoleModalProps) 
   const handleSubmit = async () => {
     if (!name.trim()) return;
 
-    let result;
     if (role) {
-      result = await updateRole(role.id, { name: name.trim(), permissionIds });
-    } else {
-      result = await addRole({ name: name.trim(), permissionIds });
-    }
-
-    if (result.success) {
-      await fetchRolesFromApi();
+      await updateRole(role.id, { name: name.trim(), permissionIds });
       onSuccess?.(true);
       onClose();
     } else {
-      onSuccess?.(false, result.error);
+      await addRole({ name: name.trim(), permissionIds });
+      onSuccess?.(true);
+      onClose();
     }
   };
 
