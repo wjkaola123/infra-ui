@@ -1,6 +1,7 @@
-import type { User, Role } from '../types';
+import type { User, Role, PermissionEntity } from '../types';
 import type { BackendUser } from './endpoints/user';
 import type { BackendRole } from './endpoints/role';
+import type { BackendPermission } from './endpoints/permission';
 
 export const mapBackendUserToUser = (backendUser: BackendUser): User => ({
   id: String(backendUser.id),
@@ -20,5 +21,23 @@ export const mapBackendRoleToRole = (backendRole: BackendRole): Role => ({
   id: String(backendRole.id),
   name: backendRole.name,
   permissionIds: (backendRole.permission_ids || []).map(String),
+  permissions: (backendRole.permissions || []).map((p) => ({
+    id: String(p.id),
+    name: p.name,
+    key: p.key as PermissionEntity['key'],
+  })),
   createdAt: backendRole.created_at,
 });
+
+export const mapBackendPermissionToPermission = (backendPerm: BackendPermission): PermissionEntity => ({
+  id: String(backendPerm.id),
+  name: backendPerm.name,
+  key: backendPerm.key as PermissionEntity['key'],
+});
+
+export const mapBackendRolePermissionsToPermissionEntities = (perms: BackendRole['permissions']): PermissionEntity[] =>
+  perms.map((p) => ({
+    id: String(p.id),
+    name: p.name,
+    key: p.key as PermissionEntity['key'],
+  }));

@@ -9,12 +9,8 @@ interface RoleTableProps {
 
 export function RoleTable({ onEdit }: RoleTableProps) {
   const roles = useStore((s) => s.roles);
-  const permissions = useStore((s) => s.permissions);
   const users = useStore((s) => s.users);
   const deleteRole = useStore((s) => s.deleteRole);
-
-  const getPermNames = (permIds: string[]) =>
-    permIds.map((id) => permissions.find((p) => p.id === id)?.name || '').filter(Boolean);
 
   const getUserCount = (roleId: string) =>
     users.filter((u) => u.roleIds.includes(roleId)).length;
@@ -43,8 +39,8 @@ export function RoleTable({ onEdit }: RoleTableProps) {
               <td className="px-4 py-3 text-sm font-medium text-gray-900">{role.name}</td>
               <td className="px-4 py-3">
                 <div className="flex flex-wrap gap-1">
-                  {getPermNames(role.permissionIds).map((name) => (
-                    <Tag key={name} color="green">{name}</Tag>
+                  {role.permissions?.map((p) => (
+                    <Tag key={p.id} color="green">{p.name}</Tag>
                   ))}
                 </div>
               </td>

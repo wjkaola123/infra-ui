@@ -4,6 +4,7 @@ export interface BackendRole {
   id: number;
   name: string;
   permission_ids: number[];
+  permissions: Array<{ id: number; name: string; key: string }>;
   created_at: string;
 }
 

@@ -1,8 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
-import { useStore } from './store/useStore';
-import { getTokens } from './api';
 
 async function enableMocking() {
   if (import.meta.env.DEV) {

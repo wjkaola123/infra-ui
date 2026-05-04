@@ -2,9 +2,20 @@ import { http, HttpResponse, delay } from 'msw';
 import { SEED_PERMISSIONS, SEED_LOGS } from '../data/seed';
 
 let roles = [
-  { id: 1, name: 'Super Administrator', permission_ids: [1, 2, 3, 4], created_at: '2024-01-01 00:00:00' },
-  { id: 2, name: 'Viewer', permission_ids: [1], created_at: '2024-01-02 00:00:00' },
-  { id: 3, name: 'Editor', permission_ids: [1, 2, 3], created_at: '2024-01-03 00:00:00' },
+  { id: 1, name: 'Super Administrator', permission_ids: [1, 2, 3, 4], permissions: [
+    { id: 1, name: 'Read', key: 'READ' },
+    { id: 2, name: 'Create', key: 'WRITE' },
+    { id: 3, name: 'Update', key: 'WRITE' },
+    { id: 4, name: 'Delete', key: 'DELETE' },
+  ], created_at: '2024-01-01 00:00:00' },
+  { id: 2, name: 'Viewer', permission_ids: [1], permissions: [
+    { id: 1, name: 'Read', key: 'READ' },
+  ], created_at: '2024-01-02 00:00:00' },
+  { id: 3, name: 'Editor', permission_ids: [1, 2, 3], permissions: [
+    { id: 1, name: 'Read', key: 'READ' },
+    { id: 2, name: 'Create', key: 'WRITE' },
+    { id: 3, name: 'Update', key: 'WRITE' },
+  ], created_at: '2024-01-03 00:00:00' },
 ];
 let permissions = [...SEED_PERMISSIONS];
 let logs = [...SEED_LOGS];
@@ -42,6 +53,10 @@ export const handlers = [
       id: newId,
       name: body.name,
       permission_ids: body.permission_ids || [],
+      permissions: body.permission_ids?.map((pid: number) => {
+        const perm = permissions.find((p) => String(p.id) === String(pid));
+        return perm ? { id: perm.id, name: perm.name, key: perm.key } : { id: pid, name: String(pid), key: 'READ' };
+      }) || [],
       created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
     };
     roles.push(newRole);
@@ -54,6 +69,13 @@ export const handlers = [
     const index = roles.findIndex((r) => r.id === parseInt(params.id as string));
     if (index !== -1) {
       roles[index] = { ...roles[index], ...body };
+      // Ensure permissions array is returned
+      if (body.permission_ids && !body.permissions) {
+        roles[index].permissions = body.permission_ids.map((pid: number) => {
+          const perm = permissions.find((p) => String(p.id) === String(pid));
+          return perm ? { id: perm.id, name: perm.name, key: perm.key } : { id: pid, name: String(pid), key: 'READ' };
+        });
+      }
       return HttpResponse.json({ message: 'success', status: 200, data: roles[index] });
     }
     return HttpResponse.json({ message: 'Not found', status: 404, data: null });

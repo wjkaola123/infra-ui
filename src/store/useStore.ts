@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 import type { AppState, User, Role, PermissionEntity } from '../types';
-import { SEED_PERMISSIONS, SEED_LOGS } from '../mocks/data/seed';
-import { userApi, roleApi, mapBackendUserToUser, mapBackendRoleToRole } from '../api';
+import { SEED_LOGS } from '../mocks/data/seed';
+import { userApi, roleApi, permissionApi, mapBackendUserToUser, mapBackendRoleToRole, mapBackendPermissionToPermission } from '../api';
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export const useStore = create<AppState>((set, get) => ({
   users: [],
   roles: [],
-  permissions: SEED_PERMISSIONS,
+  permissions: [],
   logs: SEED_LOGS,
 
   selectedEntity: null,
@@ -115,6 +115,28 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       const paginatedData = await roleApi.list({ page, page_size: pageSize });
       const mappedRoles = paginatedData.items.map(mapBackendRoleToRole);
+
+      // Collect all unique permissions from roles response
+      const allPerms: PermissionEntity[] = [];
+      const seenPermIds = new Set<string>();
+      for (const role of paginatedData.items) {
+        for (const p of role.permissions || []) {
+          if (!seenPermIds.has(String(p.id))) {
+            seenPermIds.add(String(p.id));
+            allPerms.push({
+              id: String(p.id),
+              name: p.name,
+              key: p.key as PermissionEntity['key'],
+            });
+          }
+        }
+      }
+      if (allPerms.length > 0) {
+        set((state) => ({
+          permissions: [...state.permissions, ...allPerms.filter((p) => !state.permissions.some((ep) => ep.id === p.id))],
+        }));
+      }
+
       set({
         roles: mappedRoles,
         rolesTotal: paginatedData.total,
@@ -124,6 +146,16 @@ export const useStore = create<AppState>((set, get) => ({
       });
     } catch (error) {
       console.error('Failed to fetch roles:', error);
+    }
+  },
+
+  fetchPermissionsFromApi: async () => {
+    try {
+      const backendPerms = await permissionApi.list();
+      const mappedPerms = backendPerms.map(mapBackendPermissionToPermission);
+      set({ permissions: mappedPerms });
+    } catch (error) {
+      console.error('Failed to fetch permissions:', error);
     }
   },
 
@@ -137,12 +169,23 @@ export const useStore = create<AppState>((set, get) => ({
     get().addLog(`Created role: ${role.name}`);
   },
 
-  updateRole: (id, data) => {
+  updateRole: async (id, data) => {
     set((state) => ({
       roles: state.roles.map((r) => (r.id === id ? { ...r, ...data } : r)),
     }));
     const name = get().roles.find((r) => r.id === id)?.name;
     get().addLog(`Updated role: ${name}`);
+    try {
+      const backendId = parseInt(id, 10);
+      const updateData: { name?: string; permission_ids?: number[] } = {};
+      if (data.name !== undefined) updateData.name = data.name;
+      if (data.permissionIds !== undefined) {
+        updateData.permission_ids = data.permissionIds.map((pid) => parseInt(pid, 10));
+      }
+      await roleApi.update(backendId, updateData);
+    } catch (error) {
+      console.error('Failed to update role in backend:', error);
+    }
   },
 
   deleteRole: (id) => {

@@ -15,6 +15,7 @@ export interface Role {
   id: string;
   name: string;
   permissionIds: string[];
+  permissions?: PermissionEntity[];
   createdAt: string;
 }
 
@@ -68,6 +69,7 @@ export interface AppState {
   setRolesPage: (page: number) => void;
   setRolesPageSize: (size: number) => void;
   fetchRolesFromApi: (page?: number, pageSize?: number) => Promise<void>;
+  fetchPermissionsFromApi: () => Promise<void>;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
   updateUser: (id: string, data: Partial<User>) => void;
   deleteUser: (id: string) => Promise<{ success: boolean; error?: string }>;
