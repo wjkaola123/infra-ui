@@ -17,6 +17,7 @@ export function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
   const [permissionIds, setPermissionIds] = useState<string[]>([]);
 
   const permissions = useStore((s) => s.permissions);
+  const fetchPermissionsFromApi = useStore((s) => s.fetchPermissionsFromApi);
   const addRole = useStore((s) => s.addRole);
   const updateRole = useStore((s) => s.updateRole);
 
@@ -30,6 +31,12 @@ export function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
     }
   }, [role, isOpen]);
 
+  useEffect(() => {
+    if (isOpen) {
+      fetchPermissionsFromApi();
+    }
+  }, [isOpen]);
+
   const handleSubmit = () => {
     if (!name.trim()) return;
 
@@ -41,7 +48,10 @@ export function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
     onClose();
   };
 
-  const permOptions = permissions.map((p) => ({ value: p.id, label: p.name }));
+  // 编辑时：下拉选项用 store 中的完整权限列表，选中状态用 role.permissionIds
+  const permOptions = permissions.length > 0
+    ? permissions.map((p) => ({ value: p.id, label: p.name }))
+    : [];
 
   return (
     <Modal

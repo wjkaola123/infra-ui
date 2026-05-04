@@ -35,9 +35,9 @@ export const mapBackendPermissionToPermission = (backendPerm: BackendPermission)
   key: backendPerm.key as PermissionEntity['key'],
 });
 
-export const mapBackendRolePermissionsToPermissionEntities = (perms: BackendRole['permissions']): PermissionEntity[] =>
+export const mapBackendRolePermissionsToPermissionEntities = (perms: { id: number; name: string; description?: string }[]): PermissionEntity[] =>
   perms.map((p) => ({
     id: String(p.id),
     name: p.name,
-    key: p.key as PermissionEntity['key'],
+    key: 'READ' as PermissionEntity['key'],
   }));

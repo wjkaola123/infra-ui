@@ -8,7 +8,7 @@ export interface BackendPermission {
 
 export const permissionApi = {
   list: async (): Promise<BackendPermission[]> => {
-    const response = await apiClient.get<{ data: BackendPermission[] }>('/permissions');
+    const response = await apiClient.get<{ data: BackendPermission[] }>('/roles/permissions');
     return response.data.data;
   },
 };

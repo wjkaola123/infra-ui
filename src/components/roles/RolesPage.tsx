@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { RoleTable } from './RoleTable';
 import { RoleModal } from './RoleModal';
 import { useStore } from '../../store/useStore';
+import { roleApi } from '../../api';
 import type { Role } from '../../types';
 
 export function RolesPage() {
@@ -19,9 +20,25 @@ export function RolesPage() {
     setRolesPage(1);
   }, [setRolesPage]);
 
-  const handleEdit = (role: Role) => {
-    setEditingRole(role);
-    setModalOpen(true);
+  const handleEdit = async (role: Role) => {
+    try {
+      const backendRole = await roleApi.get(parseInt(role.id, 10));
+      const mappedRole: Role = {
+        id: String(backendRole.id),
+        name: backendRole.name,
+        permissionIds: backendRole.permissions.map((p) => String(p.id)),
+        permissions: backendRole.permissions.map((p) => ({
+          id: String(p.id),
+          name: p.name,
+          key: 'READ' as const,
+        })),
+        createdAt: backendRole.created_at,
+      };
+      setEditingRole(mappedRole);
+      setModalOpen(true);
+    } catch (error) {
+      console.error('Failed to fetch role:', error);
+    }
   };
 
   const handleAdd = () => {

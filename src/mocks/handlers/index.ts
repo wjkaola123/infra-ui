@@ -1,26 +1,23 @@
 import { http, HttpResponse, delay } from 'msw';
-import { SEED_PERMISSIONS, SEED_LOGS } from '../data/seed';
+import { SEED_LOGS } from '../data/seed';
 
 let roles = [
-  { id: 1, name: 'Super Administrator', permission_ids: [1, 2, 3, 4], permissions: [
-    { id: 1, name: 'Read', key: 'READ' },
-    { id: 2, name: 'Create', key: 'WRITE' },
-    { id: 3, name: 'Update', key: 'WRITE' },
-    { id: 4, name: 'Delete', key: 'DELETE' },
+  { id: 1, name: 'Super Administrator', permission_ids: ['p1', 'p2', 'p3', 'p4'], permissions: [
+    { id: 'p1', name: 'Read', key: 'READ' },
+    { id: 'p2', name: 'Create', key: 'WRITE' },
+    { id: 'p3', name: 'Update', key: 'WRITE' },
+    { id: 'p4', name: 'Delete', key: 'DELETE' },
   ], created_at: '2024-01-01 00:00:00' },
-  { id: 2, name: 'Viewer', permission_ids: [1], permissions: [
-    { id: 1, name: 'Read', key: 'READ' },
+  { id: 2, name: 'Viewer', permission_ids: ['p1'], permissions: [
+    { id: 'p1', name: 'Read', key: 'READ' },
   ], created_at: '2024-01-02 00:00:00' },
-  { id: 3, name: 'Editor', permission_ids: [1, 2, 3], permissions: [
-    { id: 1, name: 'Read', key: 'READ' },
-    { id: 2, name: 'Create', key: 'WRITE' },
-    { id: 3, name: 'Update', key: 'WRITE' },
+  { id: 3, name: 'Editor', permission_ids: ['p1', 'p2', 'p3'], permissions: [
+    { id: 'p1', name: 'Read', key: 'READ' },
+    { id: 'p2', name: 'Create', key: 'WRITE' },
+    { id: 'p3', name: 'Update', key: 'WRITE' },
   ], created_at: '2024-01-03 00:00:00' },
 ];
-let permissions = [...SEED_PERMISSIONS];
 let logs = [...SEED_LOGS];
-
-const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export const handlers = [
   // Roles
@@ -45,6 +42,15 @@ export const handlers = [
     });
   }),
 
+  http.get('/api/v1/roles/:id', async ({ params }) => {
+    await delay(100);
+    const role = roles.find((r) => r.id === parseInt(params.id as string));
+    if (role) {
+      return HttpResponse.json({ message: 'success', status: 200, data: role });
+    }
+    return HttpResponse.json({ message: 'Not found', status: 404, data: null });
+  }),
+
   http.post('/api/v1/roles/', async ({ request }) => {
     await delay(100);
     const body = await request.json() as any;
@@ -53,10 +59,7 @@ export const handlers = [
       id: newId,
       name: body.name,
       permission_ids: body.permission_ids || [],
-      permissions: body.permission_ids?.map((pid: number) => {
-        const perm = permissions.find((p) => String(p.id) === String(pid));
-        return perm ? { id: perm.id, name: perm.name, key: perm.key } : { id: pid, name: String(pid), key: 'READ' };
-      }) || [],
+      permissions: (body.permission_ids || []).map((pid: string) => ({ id: pid, name: pid, key: 'READ' })),
       created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
     };
     roles.push(newRole);
@@ -69,12 +72,8 @@ export const handlers = [
     const index = roles.findIndex((r) => r.id === parseInt(params.id as string));
     if (index !== -1) {
       roles[index] = { ...roles[index], ...body };
-      // Ensure permissions array is returned
       if (body.permission_ids && !body.permissions) {
-        roles[index].permissions = body.permission_ids.map((pid: number) => {
-          const perm = permissions.find((p) => String(p.id) === String(pid));
-          return perm ? { id: perm.id, name: perm.name, key: perm.key } : { id: pid, name: String(pid), key: 'READ' };
-        });
+        roles[index].permissions = body.permission_ids.map((pid: string) => ({ id: pid, name: pid, key: 'READ' }));
       }
       return HttpResponse.json({ message: 'success', status: 200, data: roles[index] });
     }
@@ -87,20 +86,7 @@ export const handlers = [
     return HttpResponse.json({ message: 'success', status: 200, data: null });
   }),
 
-  // Permissions
-  http.get('/api/permissions', async () => {
-    await delay(100);
-    return HttpResponse.json({ data: permissions });
-  }),
-
-  http.post('/api/permissions', async ({ request }) => {
-    await delay(100);
-    const body = await request.json() as any;
-    const newPerm = { id: generateId(), name: body.name, key: body.key };
-    permissions.push(newPerm);
-    return HttpResponse.json({ data: newPerm }, { status: 201 });
-  }),
-
+  // Logs
   http.get('/api/logs', async () => {
     await delay(100);
     return HttpResponse.json({ data: logs });
