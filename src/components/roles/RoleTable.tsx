@@ -11,6 +11,7 @@ interface RoleTableProps {
 
 export function RoleTable({ onEdit }: RoleTableProps) {
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<Role | null>(null);
   const roles = useStore((s) => s.roles);
   const users = useStore((s) => s.users);
@@ -21,7 +22,10 @@ export function RoleTable({ onEdit }: RoleTableProps) {
     setError(null);
     const result = await deleteRole(confirmDelete.id);
     setConfirmDelete(null);
-    if (!result.success && result.error) {
+    if (result.success) {
+      setSuccess('Role deleted successfully');
+      setTimeout(() => setSuccess(null), 3000);
+    } else if (result.error) {
       setError(result.error);
       setTimeout(() => setError(null), 3000);
     }
@@ -41,6 +45,11 @@ export function RoleTable({ onEdit }: RoleTableProps) {
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
           <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
+      {success && (
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+          <p className="text-sm text-green-600">{success}</p>
         </div>
       )}
       <table className="w-full bg-white rounded-lg shadow">
