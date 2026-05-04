@@ -28,8 +28,32 @@ export function UserTable({ onEdit }: UserTableProps) {
   const getRoleNames = (roleIds: string[]) =>
     roleIds.map((id) => roles.find((r) => r.id === id)?.name || '').filter(Boolean);
 
+  const getRolesDisplay = (user: User) => {
+    if (user.roles && user.roles.length > 0) {
+      return user.roles.map((r) => r.name);
+    }
+    return getRoleNames(user.roleIds);
+  };
+
   const getPermNames = (permIds: string[]) =>
     permIds.map((id) => permissions.find((p) => p.id === id)?.name || '').filter(Boolean);
+
+  const getPermissionsDisplay = (user: User) => {
+    if (user.roles) {
+      const permNames: string[] = [];
+      for (const role of user.roles) {
+        if (role.permissions) {
+          for (const p of role.permissions) {
+            if (!permNames.includes(p.name)) {
+              permNames.push(p.name);
+            }
+          }
+        }
+      }
+      return permNames;
+    }
+    return getPermNames(user.permissionIds);
+  };
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -67,18 +91,18 @@ export function UserTable({ onEdit }: UserTableProps) {
               <td className="px-4 py-3 text-sm font-medium text-gray-900">{user.name}</td>
               <td className="px-4 py-3">
                 <div className="flex flex-wrap gap-1">
-                  {getRoleNames(user.roleIds).map((name) => (
+                  {getRolesDisplay(user).map((name) => (
                     <Tag key={name} color="blue">{name}</Tag>
                   ))}
-                  {user.roleIds.length === 0 && <span className="text-gray-400 text-sm">-</span>}
+                  {getRolesDisplay(user).length === 0 && <span className="text-gray-400 text-sm">-</span>}
                 </div>
               </td>
               <td className="px-4 py-3">
                 <div className="flex flex-wrap gap-1">
-                  {getPermNames(user.permissionIds).map((name) => (
+                  {getPermissionsDisplay(user).map((name) => (
                     <Tag key={name} color="amber">{name}</Tag>
                   ))}
-                  {user.permissionIds.length === 0 && <span className="text-gray-400 text-sm">-</span>}
+                  {getPermissionsDisplay(user).length === 0 && <span className="text-gray-400 text-sm">-</span>}
                 </div>
               </td>
               <td className="px-4 py-3">

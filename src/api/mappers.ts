@@ -1,15 +1,29 @@
 import type { User, Role, PermissionEntity } from '../types';
-import type { BackendUser } from './endpoints/user';
+import type { BackendUser, BackendRoleRef } from './endpoints/user';
 import type { BackendRole } from './endpoints/role';
 import type { BackendPermission } from './endpoints/permission';
 
 export const mapBackendUserToUser = (backendUser: BackendUser): User => ({
   id: String(backendUser.id),
   name: backendUser.username,
-  roleIds: [],
+  roleIds: (backendUser.roles || []).map((r) => String(r.id)),
   permissionIds: [],
   status: backendUser.is_active ? 'active' : 'inactive',
   createdAt: backendUser.created_at || new Date().toISOString(),
+  roles: (backendUser.roles || []).map(mapBackendRoleRefToRole),
+});
+
+export const mapBackendRoleRefToRole = (roleRef: BackendRoleRef): Role => ({
+  id: String(roleRef.id),
+  name: roleRef.name,
+  permissionIds: (roleRef.permissions || []).map((p) => String(p.id)),
+  permissions: (roleRef.permissions || []).map((p) => ({
+    id: String(p.id),
+    name: p.name,
+    key: p.key as PermissionEntity['key'],
+  })),
+  createdAt: roleRef.created_at,
+  assignedUsersCount: roleRef.assigned_users_count,
 });
 
 export const mapUserToBackendCreate = (user: Partial<User>) => ({

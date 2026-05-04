@@ -1,5 +1,15 @@
 import { apiClient } from '../client';
 
+export interface BackendRoleRef {
+  id: number;
+  name: string;
+  description: string;
+  permissions: Array<{ id: number; name: string; key: string }>;
+  assigned_users_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface BackendUser {
   id: number;
   username: string;
@@ -7,6 +17,7 @@ export interface BackendUser {
   is_active: boolean;
   created_at: string | null;
   updated_at: string | null;
+  roles: BackendRoleRef[];
 }
 
 export interface PaginatedUsersResponse {

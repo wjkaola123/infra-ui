@@ -9,6 +9,7 @@ export interface User {
   permissionIds: string[];
   status: UserStatus;
   createdAt: string;
+  roles?: Role[];
 }
 
 export interface Role {
