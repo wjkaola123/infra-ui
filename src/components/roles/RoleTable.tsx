@@ -64,7 +64,7 @@ export function RoleTable({ onEdit }: RoleTableProps) {
                   ))}
                 </div>
               </td>
-              <td className="px-4 py-3 text-sm text-gray-500">{getUserCount(role.id)}</td>
+              <td className="px-4 py-3 text-sm text-gray-500">{role.assignedUsersCount ?? getUserCount(role.id)}</td>
               <td className="px-4 py-3 text-sm text-gray-500">{role.createdAt}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">

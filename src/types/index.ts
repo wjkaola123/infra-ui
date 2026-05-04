@@ -17,6 +17,7 @@ export interface Role {
   permissionIds: string[];
   permissions?: PermissionEntity[];
   createdAt: string;
+  assignedUsersCount?: number;
 }
 
 export interface PermissionEntity {

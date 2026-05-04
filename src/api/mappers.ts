@@ -27,6 +27,7 @@ export const mapBackendRoleToRole = (backendRole: BackendRole): Role => ({
     key: p.key as PermissionEntity['key'],
   })),
   createdAt: backendRole.created_at,
+  assignedUsersCount: backendRole.assigned_users_count,
 });
 
 export const mapBackendPermissionToPermission = (backendPerm: BackendPermission): PermissionEntity => ({

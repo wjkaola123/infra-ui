@@ -6,6 +6,7 @@ export interface BackendRole {
   permission_ids: number[];
   permissions: Array<{ id: number; name: string; key: string }>;
   created_at: string;
+  assigned_users_count?: number;
 }
 
 export interface PaginatedRolesResponse {
