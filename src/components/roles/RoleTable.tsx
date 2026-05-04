@@ -30,6 +30,12 @@ export function RoleTable({ onEdit }: RoleTableProps) {
   const getUserCount = (roleId: string) =>
     users.filter((u) => u.roleIds.includes(roleId)).length;
 
+  const formatDateTime = (isoString: string) => {
+    const date = new Date(isoString);
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  };
+
   return (
     <div className="overflow-x-auto">
       {error && (
@@ -65,7 +71,7 @@ export function RoleTable({ onEdit }: RoleTableProps) {
                 </div>
               </td>
               <td className="px-4 py-3 text-sm text-gray-500">{role.assignedUsersCount ?? getUserCount(role.id)}</td>
-              <td className="px-4 py-3 text-sm text-gray-500">{role.createdAt}</td>
+              <td className="px-4 py-3 text-sm text-gray-500">{formatDateTime(role.createdAt)}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" onClick={() => onEdit(role)}>Edit</Button>
