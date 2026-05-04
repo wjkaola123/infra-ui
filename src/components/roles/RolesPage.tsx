@@ -9,6 +9,7 @@ import type { Role } from '../../types';
 export function RolesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
+  const [notification, setNotification] = useState<string | null>(null);
 
   const rolesPage = useStore((s) => s.rolesPage);
   const rolesPageSize = useStore((s) => s.rolesPageSize);
@@ -16,6 +17,7 @@ export function RolesPage() {
   const rolesTotalPages = useStore((s) => s.rolesTotalPages);
   const setRolesPage = useStore((s) => s.setRolesPage);
   const setRolesPageSize = useStore((s) => s.setRolesPageSize);
+  const fetchRolesFromApi = useStore((s) => s.fetchRolesFromApi);
 
   useEffect(() => {
     setRolesPage(1);
@@ -47,6 +49,16 @@ export function RolesPage() {
     setModalOpen(true);
   };
 
+  const handleSuccess = async (success: boolean, errorMessage?: string) => {
+    if (success) {
+      setNotification('Role saved successfully');
+      await fetchRolesFromApi();
+    } else {
+      setNotification(errorMessage || 'Operation failed');
+    }
+    setTimeout(() => setNotification(null), 3000);
+  };
+
   const handleClose = () => {
     setModalOpen(false);
     setEditingRole(null);
@@ -60,6 +72,11 @@ export function RolesPage() {
 
   return (
     <div className="space-y-4">
+      {notification && (
+        <div className={`p-3 border rounded-md ${notification.includes('success') ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+          <p className={`text-sm ${notification.includes('success') ? 'text-green-600' : 'text-red-600'}`}>{notification}</p>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">Role Management</h2>
         <div className="flex gap-2">
@@ -88,7 +105,7 @@ export function RolesPage() {
         onPageSizeChange={setRolesPageSize}
       />
 
-      <RoleModal isOpen={modalOpen} onClose={handleClose} role={editingRole} />
+      <RoleModal isOpen={modalOpen} onClose={handleClose} role={editingRole} onSuccess={handleSuccess} />
     </div>
   );
 }

@@ -10,9 +10,10 @@ interface RoleModalProps {
   isOpen: boolean;
   onClose: () => void;
   role?: Role | null;
+  onSuccess?: (success: boolean, errorMessage?: string) => void;
 }
 
-export function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
+export function RoleModal({ isOpen, onClose, role, onSuccess }: RoleModalProps) {
   const [name, setName] = useState('');
   const [permissionIds, setPermissionIds] = useState<string[]>([]);
 
@@ -41,13 +42,20 @@ export function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
   const handleSubmit = async () => {
     if (!name.trim()) return;
 
+    let result;
     if (role) {
-      await updateRole(role.id, { name: name.trim(), permissionIds });
-      await fetchRolesFromApi();
+      result = await updateRole(role.id, { name: name.trim(), permissionIds });
     } else {
-      addRole({ name: name.trim(), permissionIds });
+      result = await addRole({ name: name.trim(), permissionIds });
     }
-    onClose();
+
+    if (result.success) {
+      await fetchRolesFromApi();
+      onSuccess?.(true);
+      onClose();
+    } else {
+      onSuccess?.(false, result.error);
+    }
   };
 
   // 编辑时：下拉选项用 store 中的完整权限列表，选中状态用 role.permissionIds

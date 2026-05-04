@@ -159,14 +159,25 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  addRole: (role) => {
-    const newRole: Role = {
-      ...role,
-      id: generateId(),
-      createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
-    };
-    set((state) => ({ roles: [...state.roles, newRole] }));
-    get().addLog(`Created role: ${role.name}`);
+  addRole: async (role) => {
+    try {
+      const backendRole = await roleApi.create({
+        name: role.name,
+        permission_ids: role.permissionIds.map((pid) => parseInt(pid, 10)),
+      });
+      const newRole: Role = {
+        ...role,
+        id: String(backendRole.id),
+        createdAt: backendRole.created_at.replace('T', ' ').substring(0, 19),
+      };
+      set((state) => ({ roles: [...state.roles, newRole] }));
+      get().addLog(`Created role: ${role.name}`);
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || 'Create failed';
+      console.error('Failed to create role:', errorMessage);
+      return { success: false, error: errorMessage };
+    }
   },
 
   updateRole: async (id, data) => {
@@ -183,8 +194,11 @@ export const useStore = create<AppState>((set, get) => ({
         updateData.permission_ids = data.permissionIds.map((pid) => parseInt(pid, 10));
       }
       await roleApi.update(backendId, updateData);
-    } catch (error) {
-      console.error('Failed to update role in backend:', error);
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || 'Update failed';
+      console.error('Failed to update role in backend:', errorMessage);
+      return { success: false, error: errorMessage };
     }
   },
 
