@@ -188,12 +188,21 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  deleteRole: (id) => {
+  deleteRole: async (id) => {
     const role = get().roles.find((r) => r.id === id);
-    set((state) => ({
-      roles: state.roles.filter((r) => r.id !== id),
-    }));
-    get().addLog(`Deleted role: ${role?.name}`);
+    try {
+      const backendId = parseInt(id, 10);
+      await roleApi.delete(backendId);
+      set((state) => ({
+        roles: state.roles.filter((r) => r.id !== id),
+      }));
+      get().addLog(`Deleted role: ${role?.name}`);
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || 'Delete failed';
+      console.error('Failed to delete role in backend:', errorMessage);
+      return { success: false, error: errorMessage };
+    }
   },
 
   addPermission: (permission) => {
