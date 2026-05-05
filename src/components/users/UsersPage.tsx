@@ -10,6 +10,7 @@ import { mapBackendUserToUser } from '../../api/mappers';
 export function UsersPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [notification, setNotification] = useState<string | null>(null);
 
   const usersPage = useStore((s) => s.usersPage);
   const usersPageSize = useStore((s) => s.usersPageSize);
@@ -43,6 +44,17 @@ export function UsersPage() {
     setEditingUser(null);
   };
 
+  const handleResult = (success: boolean, errorMessage?: string) => {
+    if (success) {
+      setNotification('User saved successfully');
+    } else {
+      setNotification(errorMessage || 'Operation failed');
+    }
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const fetchUsersFromApi = useStore((s) => s.fetchUsersFromApi);
+
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= usersTotalPages) {
       setUsersPage(newPage);
@@ -51,6 +63,11 @@ export function UsersPage() {
 
   return (
     <div className="space-y-4">
+      {notification && (
+        <div className={`p-3 border rounded-md ${notification.includes('success') ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+          <p className={`text-sm ${notification.includes('success') ? 'text-green-600' : 'text-red-600'}`}>{notification}</p>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
         <div className="flex gap-2">
@@ -79,7 +96,7 @@ export function UsersPage() {
         onPageSizeChange={setUsersPageSize}
       />
 
-      <UserModal isOpen={modalOpen} onClose={handleClose} user={editingUser} />
+      <UserModal isOpen={modalOpen} onClose={handleClose} onResult={(success, error) => { handleResult(success, error); if (success) fetchUsersFromApi(usersPage, usersPageSize); }} user={editingUser} />
     </div>
   );
 }

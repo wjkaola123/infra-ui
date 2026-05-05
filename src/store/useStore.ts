@@ -79,8 +79,11 @@ export const useStore = create<AppState>((set, get) => ({
     get().addLog(`Created user: ${user.name}`);
     try {
       await userApi.create({ username: user.name, email: `${user.name}@example.com` });
-    } catch (error) {
-      console.error('Failed to create user in backend:', error);
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || 'Create failed';
+      console.error('Failed to create user in backend:', errorMessage);
+      return { success: false, error: errorMessage };
     }
   },
 
@@ -97,8 +100,11 @@ export const useStore = create<AppState>((set, get) => ({
       if (data.status !== undefined) updateData.is_active = data.status === 'active';
       if (data.roleIds !== undefined) updateData.role_ids = data.roleIds.map((rid) => parseInt(rid, 10));
       await userApi.update(backendId, updateData);
-    } catch (error) {
-      console.error('Failed to update user in backend:', error);
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || 'Update failed';
+      console.error('Failed to update user in backend:', errorMessage);
+      return { success: false, error: errorMessage };
     }
   },
 

@@ -74,8 +74,8 @@ export interface AppState {
   setRolesNameFilter: (filter: string) => void;
   fetchRolesFromApi: (page?: number, pageSize?: number, nameFilter?: string) => Promise<void>;
   fetchPermissionsFromApi: () => Promise<void>;
-  addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
-  updateUser: (id: string, data: Partial<User>) => void;
+  addUser: (user: Omit<User, 'id' | 'createdAt'>) => Promise<{ success: boolean; error?: string }>;
+  updateUser: (id: string, data: Partial<User>) => Promise<{ success: boolean; error?: string }>;
   deleteUser: (id: string) => Promise<{ success: boolean; error?: string }>;
   addRole: (role: Omit<Role, 'id' | 'createdAt'>) => void;
   updateRole: (id: string, data: Partial<Role>) => void;

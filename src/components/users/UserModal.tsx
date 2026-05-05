@@ -9,10 +9,11 @@ import type { User } from '../../types';
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onResult?: (success: boolean, errorMessage?: string) => void;
   user?: User | null;
 }
 
-export function UserModal({ isOpen, onClose, user }: UserModalProps) {
+export function UserModal({ isOpen, onClose, onResult, user }: UserModalProps) {
   const [name, setName] = useState('');
   const [roleIds, setRoleIds] = useState<string[]>([]);
   const [status, setStatus] = useState(true);
@@ -38,17 +39,18 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
     }
   }, [user, isOpen]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim()) return;
 
+    let result: { success: boolean; error?: string };
     if (user) {
-      updateUser(user.id, {
+      result = await updateUser(user.id, {
         name: name.trim(),
         roleIds,
         status: status ? 'active' : 'inactive',
       });
     } else {
-      addUser({
+      result = await addUser({
         name: name.trim(),
         roleIds,
         permissionIds: [],
@@ -56,6 +58,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
       });
     }
     onClose();
+    onResult?.(result.success, result.error);
   };
 
   const roleOptions = roles.map((r) => ({ value: r.id, label: r.name }));
