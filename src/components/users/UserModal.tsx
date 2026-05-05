@@ -18,8 +18,13 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
   const [status, setStatus] = useState(true);
 
   const roles = useStore((s) => s.roles);
+  const fetchRolesFromApi = useStore((s) => s.fetchRolesFromApi);
   const addUser = useStore((s) => s.addUser);
   const updateUser = useStore((s) => s.updateUser);
+
+  useEffect(() => {
+    fetchRolesFromApi(1, 10000);
+  }, [fetchRolesFromApi]);
 
   useEffect(() => {
     if (user) {

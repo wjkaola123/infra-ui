@@ -4,6 +4,8 @@ import { UserModal } from './UserModal';
 import { Pagination } from '../ui/Pagination';
 import { useStore } from '../../store/useStore';
 import type { User } from '../../types';
+import { userApi } from '../../api/endpoints/user';
+import { mapBackendUserToUser } from '../../api/mappers';
 
 export function UsersPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -20,9 +22,15 @@ export function UsersPage() {
     setUsersPage(1);
   }, [setUsersPage]);
 
-  const handleEdit = (user: User) => {
-    setEditingUser(user);
-    setModalOpen(true);
+  const handleEdit = async (user: User) => {
+    try {
+      const backendUser = await userApi.get(parseInt(user.id, 10));
+      const mappedUser = mapBackendUserToUser(backendUser);
+      setEditingUser(mappedUser);
+      setModalOpen(true);
+    } catch (error) {
+      console.error('Failed to fetch user details:', error);
+    }
   };
 
   const handleAdd = () => {

@@ -95,6 +95,7 @@ export const useStore = create<AppState>((set, get) => ({
       const updateData: any = {};
       if (data.name !== undefined) updateData.username = data.name;
       if (data.status !== undefined) updateData.is_active = data.status === 'active';
+      if (data.roleIds !== undefined) updateData.role_ids = data.roleIds.map((rid) => parseInt(rid, 10));
       await userApi.update(backendId, updateData);
     } catch (error) {
       console.error('Failed to update user in backend:', error);
