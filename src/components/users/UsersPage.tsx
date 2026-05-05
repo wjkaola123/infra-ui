@@ -78,13 +78,26 @@ export function UsersPage() {
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
         <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Search username..."
-            value={usersUsernameFilter}
-            onChange={handleSearchChange}
-            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search username..."
+              value={usersUsernameFilter}
+              onChange={handleSearchChange}
+              className="px-3 py-2 pr-8 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+            {usersUsernameFilter && (
+              <button
+                type="button"
+                onClick={() => setUsersUsernameFilter('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
           <button
             onClick={handleAdd}
             className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-hover"
