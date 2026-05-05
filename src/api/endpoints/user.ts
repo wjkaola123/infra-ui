@@ -32,6 +32,7 @@ export interface CreateUserRequest {
   username: string;
   email: string;
   password?: string;
+  role_ids?: number[];
 }
 
 export interface UpdateUserRequest {

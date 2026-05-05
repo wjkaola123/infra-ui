@@ -84,7 +84,12 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({ users: [...state.users, newUser] }));
     get().addLog(`Created user: ${user.name}`);
     try {
-      await userApi.create({ username: user.name, email: `${user.name}@example.com` });
+      await userApi.create({
+        username: user.name,
+        email: user.email,
+        password: user.password,
+        role_ids: user.roleIds?.map((rid) => parseInt(rid, 10)),
+      });
       return { success: true };
     } catch (error: any) {
       const errorMessage = error.response?.data?.detail || 'Create failed';

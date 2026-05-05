@@ -6,6 +6,7 @@ import type { BackendPermission } from './endpoints/permission';
 export const mapBackendUserToUser = (backendUser: BackendUser): User => ({
   id: String(backendUser.id),
   name: backendUser.username,
+  email: backendUser.email,
   roleIds: (backendUser.roles || []).map((r) => String(r.id)),
   permissionIds: [],
   status: backendUser.is_active ? 'active' : 'inactive',

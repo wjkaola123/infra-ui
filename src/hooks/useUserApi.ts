@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { userApi, mapBackendUserToUser, mapUserToBackendCreate } from '../api';
+import { userApi, mapBackendUserToUser } from '../api';
 import { useStore } from '../store/useStore';
 import type { User } from '../types';
 
@@ -26,11 +26,17 @@ export const useUserApi = () => {
     setLoading(true);
     setError(null);
     try {
-      const backendData = mapUserToBackendCreate(userData);
+      const backendData: { username: string; email: string; password?: string; role_ids?: number[] } = {
+        username: userData.name || 'unknown',
+        email: userData.email || `${userData.name}@example.com`,
+      };
+      if (userData.password) backendData.password = userData.password;
+      if (userData.roleIds) backendData.role_ids = userData.roleIds.map((id) => parseInt(id, 10));
       const newBackendUser = await userApi.create(backendData);
       const newUser = mapBackendUserToUser(newBackendUser);
       addUserToStore({
         name: newUser.name,
+        email: newUser.email,
         roleIds: [],
         permissionIds: [],
         status: newUser.status,
