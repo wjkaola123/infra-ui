@@ -10,19 +10,21 @@ interface UserTableProps {
 }
 
 export function UserTable({ onEdit }: UserTableProps) {
-  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const users = useStore((s) => s.users);
   const roles = useStore((s) => s.roles);
   const permissions = useStore((s) => s.permissions);
   const deleteUser = useStore((s) => s.deleteUser);
 
-  const handleDelete = async (id: string) => {
-    setError(null);
+  const handleDelete = async (id: string, userName: string) => {
+    setMessage(null);
     const result = await deleteUser(id);
-    if (!result.success && result.error) {
-      setError(result.error);
-      setTimeout(() => setError(null), 3000);
+    if (result.success) {
+      setMessage({ type: 'success', text: `User "${userName}" deleted successfully` });
+    } else {
+      setMessage({ type: 'error', text: result.error || 'Failed to delete user' });
     }
+    setTimeout(() => setMessage(null), 3000);
   };
 
   const getRoleNames = (roleIds: string[]) =>
@@ -63,9 +65,9 @@ export function UserTable({ onEdit }: UserTableProps) {
 
   return (
     <div className="overflow-x-auto">
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm text-red-600">{error}</p>
+      {message && (
+        <div className={`mb-4 p-3 rounded-md ${message.type === 'success' ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+          <p className={`text-sm ${message.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>{message.text}</p>
         </div>
       )}
       <table className="w-full bg-white rounded-lg shadow">
@@ -114,7 +116,7 @@ export function UserTable({ onEdit }: UserTableProps) {
               <td className="px-4 py-3">
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" onClick={() => onEdit(user)}>Edit</Button>
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => handleDelete(user.id)}>Delete</Button>
+                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => handleDelete(user.id, user.name)}>Delete</Button>
                 </div>
               </td>
             </tr>
