@@ -56,6 +56,7 @@ export interface AppState {
   usersPage: number;
   usersPageSize: number;
   usersTotalPages: number;
+  usersUsernameFilter: string;
 
   // Role pagination
   rolesTotal: number;
@@ -66,9 +67,10 @@ export interface AppState {
 
   selectEntity: (entity: { id: string; type: EntityType } | null) => void;
   setUsers: (users: User[]) => void;
-  fetchUsersFromApi: (page?: number, pageSize?: number) => Promise<void>;
+  fetchUsersFromApi: (page?: number, pageSize?: number, usernameFilter?: string) => Promise<void>;
   setUsersPage: (page: number) => void;
   setUsersPageSize: (size: number) => void;
+  setUsersUsernameFilter: (filter: string) => void;
   setRolesPage: (page: number) => void;
   setRolesPageSize: (size: number) => void;
   setRolesNameFilter: (filter: string) => void;

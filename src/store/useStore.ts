@@ -14,11 +14,25 @@ export const useStore = create<AppState>((set, get) => ({
   selectedEntity: null,
   operationLog: [],
 
-  // Pagination defaults
+  // User pagination defaults
   usersTotal: 0,
   usersPage: 1,
   usersPageSize: 10,
   usersTotalPages: 1,
+  usersUsernameFilter: '',
+
+  setUsersUsernameFilter: (filter: string) => {
+    set({ usersUsernameFilter: filter });
+    get().fetchUsersFromApi(1, get().usersPageSize, filter);
+  },
+
+  setUsersPage: (page) => {
+    get().fetchUsersFromApi(page, get().usersPageSize, get().usersUsernameFilter);
+  },
+
+  setUsersPageSize: (size: number) => {
+    get().fetchUsersFromApi(1, size, get().usersUsernameFilter);
+  },
 
   // Role pagination
   rolesTotal: 0,
@@ -29,14 +43,6 @@ export const useStore = create<AppState>((set, get) => ({
   selectEntity: (entity) => set({ selectedEntity: entity }),
 
   setUsers: (users) => set({ users }),
-
-  setUsersPage: (page) => {
-    get().fetchUsersFromApi(page, get().usersPageSize);
-  },
-
-  setUsersPageSize: (size: number) => {
-    get().fetchUsersFromApi(1, size);
-  },
 
   setRolesPage: (page) => {
     get().fetchRolesFromApi(page, get().rolesPageSize, get().rolesNameFilter);
@@ -53,9 +59,9 @@ export const useStore = create<AppState>((set, get) => ({
     get().fetchRolesFromApi(1, get().rolesPageSize, filter);
   },
 
-  fetchUsersFromApi: async (page = 1, pageSize = 10) => {
+  fetchUsersFromApi: async (page = 1, pageSize = 10, usernameFilter?: string) => {
     try {
-      const paginatedData = await userApi.list({ page, page_size: pageSize });
+      const paginatedData = await userApi.list({ page, page_size: pageSize, username: usernameFilter });
       const mappedUsers = paginatedData.items.map(mapBackendUserToUser);
       set({
         users: mappedUsers,

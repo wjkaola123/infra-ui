@@ -47,10 +47,11 @@ export interface ApiResponse<T> {
 }
 
 export const userApi = {
-  list: async (params?: { page?: number; page_size?: number }): Promise<PaginatedUsersResponse> => {
+  list: async (params?: { page?: number; page_size?: number; username?: string }): Promise<PaginatedUsersResponse> => {
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.set('page', String(params.page));
     if (params?.page_size) searchParams.set('page_size', String(params.page_size));
+    if (params?.username) searchParams.set('username', params.username);
     const queryString = searchParams.toString();
     const url = queryString ? `/users/?${queryString}` : '/users/';
     const response = await apiClient.get<ApiResponse<PaginatedUsersResponse>>(url);

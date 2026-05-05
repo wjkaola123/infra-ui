@@ -19,6 +19,9 @@ export function UsersPage() {
   const setUsersPage = useStore((s) => s.setUsersPage);
   const setUsersPageSize = useStore((s) => s.setUsersPageSize);
 
+  const usersUsernameFilter = useStore((s) => s.usersUsernameFilter);
+  const setUsersUsernameFilter = useStore((s) => s.setUsersUsernameFilter);
+
   useEffect(() => {
     setUsersPage(1);
   }, [setUsersPage]);
@@ -61,6 +64,10 @@ export function UsersPage() {
     }
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsersUsernameFilter(e.target.value);
+  };
+
   return (
     <div className="space-y-4">
       {notification && (
@@ -74,6 +81,8 @@ export function UsersPage() {
           <input
             type="text"
             placeholder="Search username..."
+            value={usersUsernameFilter}
+            onChange={handleSearchChange}
             className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
           <button
