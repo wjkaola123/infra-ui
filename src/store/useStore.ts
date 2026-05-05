@@ -108,6 +108,8 @@ export const useStore = create<AppState>((set, get) => ({
       const backendId = parseInt(id, 10);
       const updateData: any = {};
       if (data.name !== undefined) updateData.username = data.name;
+      if (data.email !== undefined) updateData.email = data.email;
+      if (data.password !== undefined && data.password) updateData.password = data.password;
       if (data.status !== undefined) updateData.is_active = data.status === 'active';
       if (data.roleIds !== undefined) updateData.role_ids = data.roleIds.map((rid) => parseInt(rid, 10));
       await userApi.update(backendId, updateData);

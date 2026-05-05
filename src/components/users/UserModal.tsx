@@ -71,15 +71,18 @@ export function UserModal({ isOpen, onClose, onResult, user }: UserModalProps) {
   const handleSubmit = async () => {
     if (!name.trim()) return;
     if (!user && !validatePassword(password)) return;
+    if (user && password && !validatePassword(password)) return;
 
     let result: { success: boolean; error?: string };
     if (user) {
-      result = await updateUser(user.id, {
+      const updateData: any = {
         name: name.trim(),
         email: email.trim(),
         roleIds,
         status: status ? 'active' : 'inactive',
-      });
+      };
+      if (password) updateData.password = password;
+      result = await updateUser(user.id, updateData);
     } else {
       result = await addUser({
         name: name.trim(),
