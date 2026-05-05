@@ -128,6 +128,7 @@ export const useStore = create<AppState>((set, get) => ({
         users: state.users.filter((u) => u.id !== id),
       }));
       get().addLog(`Deleted user: ${user?.name}`);
+      get().fetchUsersFromApi(get().usersPage, get().usersPageSize, get().usersUsernameFilter);
       return { success: true };
     } catch (error: any) {
       const errorMessage = error.response?.data?.detail || 'Delete failed';
