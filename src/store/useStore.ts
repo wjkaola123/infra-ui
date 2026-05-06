@@ -43,7 +43,7 @@ export const useStore = create<AppState>((set, get) => ({
   // Permission pagination
   permissionsTotal: 0,
   permissionsPage: 1,
-  permissionsPageSize: 20,
+  permissionsPageSize: 10,
   permissionsTotalPages: 1,
   permissionsNameFilter: '',
 

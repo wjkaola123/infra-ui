@@ -26,7 +26,7 @@ export interface PermissionListParams {
 
 export const permissionApi = {
   list: async (params: PermissionListParams = {}): Promise<PaginatedPermissionResponse> => {
-    const { page = 1, page_size = 20, name } = params;
+    const { page = 1, page_size = 10, name } = params;
     const searchParams = new URLSearchParams();
     searchParams.set('page', String(page));
     searchParams.set('page_size', String(page_size));
