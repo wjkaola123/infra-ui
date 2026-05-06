@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AppState, User, Role, PermissionEntity } from '../types';
+import type { AppState, User, Role, PermissionEntity, Permission } from '../types';
 import { SEED_LOGS } from '../mocks/data/seed';
 import { userApi, roleApi, permissionApi, mapBackendUserToUser, mapBackendRoleToRole, mapBackendPermissionToPermission } from '../api';
 
@@ -256,7 +256,7 @@ export const useStore = create<AppState>((set, get) => ({
       const newPerm: PermissionEntity = {
         id: String(backendPerm.id),
         name: backendPerm.name,
-        key: (backendPerm as any).key || 'CUSTOM',
+        key: (backendPerm.key as Permission) || 'READ',
       };
       set((state) => ({ permissions: [...state.permissions, newPerm] }));
       get().addLog(`Created permission: ${permission.name}`);
