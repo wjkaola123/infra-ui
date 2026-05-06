@@ -8,6 +8,7 @@ import type { PermissionEntity } from '../../types';
 export function PermissionsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPermission, setEditingPermission] = useState<PermissionEntity | null>(null);
+  const [notification, setNotification] = useState<string | null>(null);
 
   const permissionsNameFilter = useStore((s) => s.permissionsNameFilter);
   const setPermissionsNameFilter = useStore((s) => s.setPermissionsNameFilter);
@@ -23,6 +24,13 @@ export function PermissionsPage() {
     fetchPermissionsFromApi(1, permissionsPageSize, permissionsNameFilter);
   }, []);
 
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => setNotification(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
   const handleEdit = (permission: PermissionEntity) => {
     setEditingPermission(permission);
     setModalOpen(true);
@@ -36,6 +44,15 @@ export function PermissionsPage() {
   const handleClose = () => {
     setModalOpen(false);
     setEditingPermission(null);
+  };
+
+  const handleResult = (success: boolean, errorMessage?: string) => {
+    if (success) {
+      setNotification('Permission saved successfully');
+      fetchPermissionsFromApi(permissionsPage, permissionsPageSize, permissionsNameFilter);
+    } else {
+      setNotification(errorMessage || 'Operation failed');
+    }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,6 +93,12 @@ export function PermissionsPage() {
         </div>
       </div>
 
+      {notification && (
+        <div className={`p-3 border rounded-md ${notification.includes('success') ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+          <p className={`text-sm ${notification.includes('success') ? 'text-green-600' : 'text-red-600'}`}>{notification}</p>
+        </div>
+      )}
+
       <PermissionTable onEdit={handleEdit} />
 
       <Pagination
@@ -87,7 +110,7 @@ export function PermissionsPage() {
         onPageSizeChange={setPermissionsPageSize}
       />
 
-      <PermissionModal isOpen={modalOpen} onClose={handleClose} permission={editingPermission} />
+      <PermissionModal isOpen={modalOpen} onClose={handleClose} onResult={handleResult} permission={editingPermission} />
     </div>
   );
 }

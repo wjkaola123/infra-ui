@@ -7,6 +7,7 @@ import { useStore } from '../../store/useStore';
 interface PermissionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onResult?: (success: boolean, errorMessage?: string) => void;
   permission?: { id: string; name: string; key?: string } | null;
 }
 
@@ -20,7 +21,7 @@ function validatePermissionName(name: string): string | null {
   return null;
 }
 
-export function PermissionModal({ isOpen, onClose, permission }: PermissionModalProps) {
+export function PermissionModal({ isOpen, onClose, onResult, permission }: PermissionModalProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -56,6 +57,7 @@ export function PermissionModal({ isOpen, onClose, permission }: PermissionModal
       updatePermission(permission.id, { name: name.trim() });
       onClose();
       setSubmitting(false);
+      onResult?.(true);
       return;
     }
 
@@ -64,8 +66,10 @@ export function PermissionModal({ isOpen, onClose, permission }: PermissionModal
 
     if (result.success) {
       onClose();
+      onResult?.(true);
     } else {
       setError(result.error || 'Failed to create permission');
+      onResult?.(false, result.error);
     }
   };
 
