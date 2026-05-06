@@ -11,4 +11,8 @@ export const permissionApi = {
     const response = await apiClient.get<{ data: BackendPermission[] }>('/roles/permissions');
     return response.data.data;
   },
+  create: async (data: { name: string; description?: string }): Promise<BackendPermission> => {
+    const response = await apiClient.post<BackendPermission>('/permissions/', data);
+    return response.data;
+  },
 };
