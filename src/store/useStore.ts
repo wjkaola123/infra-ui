@@ -247,10 +247,25 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  addPermission: (permission) => {
-    const newPerm: PermissionEntity = { ...permission, id: generateId() };
-    set((state) => ({ permissions: [...state.permissions, newPerm] }));
-    get().addLog(`Created permission: ${permission.name}`);
+  addPermission: async (permission: { name: string; description?: string }) => {
+    try {
+      const backendPerm = await permissionApi.create({
+        name: permission.name,
+        description: permission.description,
+      });
+      const newPerm: PermissionEntity = {
+        id: String(backendPerm.id),
+        name: backendPerm.name,
+        key: (backendPerm as any).key || 'CUSTOM',
+      };
+      set((state) => ({ permissions: [...state.permissions, newPerm] }));
+      get().addLog(`Created permission: ${permission.name}`);
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || error.message || 'Create failed';
+      console.error('Failed to create permission:', errorMessage);
+      return { success: false, error: errorMessage };
+    }
   },
 
   updatePermission: (id, data) => {
