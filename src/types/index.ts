@@ -84,8 +84,8 @@ export interface AppState {
   addRole: (role: Omit<Role, 'id' | 'createdAt'>) => void;
   updateRole: (id: string, data: Partial<Role>) => void;
   deleteRole: (id: string) => Promise<{ success: boolean; error?: string }>;
-  addPermission: (permission: Omit<PermissionEntity, 'id'>) => void;
-  updatePermission: (id: string, data: Partial<PermissionEntity>) => void;
+  addPermission: (permission: { name: string; description?: string }) => Promise<{ success: boolean; error?: string }>;
+  updatePermission: (id: string, data: { name: string }) => void;
   deletePermission: (id: string) => void;
   assignRoles: (userId: string, roleIds: string[]) => void;
   assignPermissions: (roleId: string, permissionIds: string[]) => void;
