@@ -319,6 +319,7 @@ export const useStore = create<AppState>((set, get) => ({
         permissions: state.permissions.filter((p) => p.id !== id),
       }));
       get().addLog(`Deleted permission: ${perm?.name}`);
+      get().fetchPermissionsFromApi(get().permissionsPage, get().permissionsPageSize, get().permissionsNameFilter);
       return { success: true };
     } catch (error: any) {
       const errorMessage = error.response?.data?.detail || error.message || 'Delete failed';
