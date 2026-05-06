@@ -78,7 +78,7 @@ export function PermissionModal({ isOpen, onClose, permission }: PermissionModal
         <>
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
           <Button onClick={handleSubmit} disabled={!isValid || submitting}>
-            {submitting ? 'Creating...' : permission ? 'Save' : 'Create'}
+            {submitting ? (permission ? 'Saving...' : 'Creating...') : permission ? 'Save' : 'Create'}
           </Button>
         </>
       }
