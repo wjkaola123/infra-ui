@@ -5,11 +5,34 @@ export interface BackendPermission {
   id: number;
   name: string;
   key: string;
+  description?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface PaginatedPermissionResponse {
+  items: BackendPermission[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
+export interface PermissionListParams {
+  page?: number;
+  page_size?: number;
+  name?: string;
 }
 
 export const permissionApi = {
-  list: async (): Promise<BackendPermission[]> => {
-    const response = await apiClient.get<{ data: BackendPermission[] }>('/roles/permissions');
+  list: async (params: PermissionListParams = {}): Promise<PaginatedPermissionResponse> => {
+    const { page = 1, page_size = 20, name } = params;
+    const searchParams = new URLSearchParams();
+    searchParams.set('page', String(page));
+    searchParams.set('page_size', String(page_size));
+    if (name) searchParams.set('name', name);
+    const url = `/permissions/?${searchParams.toString()}`;
+    const response = await apiClient.get<ApiResponse<PaginatedPermissionResponse>>(url);
     return response.data.data;
   },
   create: async (data: { name: string; description?: string }): Promise<BackendPermission> => {

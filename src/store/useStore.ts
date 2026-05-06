@@ -40,6 +40,13 @@ export const useStore = create<AppState>((set, get) => ({
   rolesPageSize: 10,
   rolesTotalPages: 1,
 
+  // Permission pagination
+  permissionsTotal: 0,
+  permissionsPage: 1,
+  permissionsPageSize: 20,
+  permissionsTotalPages: 1,
+  permissionsNameFilter: '',
+
   selectEntity: (entity) => set({ selectedEntity: entity }),
 
   setUsers: (users) => set({ users }),
@@ -57,6 +64,19 @@ export const useStore = create<AppState>((set, get) => ({
   setRolesNameFilter: (filter: string) => {
     set({ rolesNameFilter: filter });
     get().fetchRolesFromApi(1, get().rolesPageSize, filter);
+  },
+
+  setPermissionsPage: (page) => {
+    get().fetchPermissionsFromApi(page, get().permissionsPageSize, get().permissionsNameFilter);
+  },
+
+  setPermissionsPageSize: (size) => {
+    get().fetchPermissionsFromApi(1, size, get().permissionsNameFilter);
+  },
+
+  setPermissionsNameFilter: (filter: string) => {
+    set({ permissionsNameFilter: filter });
+    get().fetchPermissionsFromApi(1, get().permissionsPageSize, filter);
   },
 
   fetchUsersFromApi: async (page = 1, pageSize = 10, usernameFilter?: string) => {
@@ -177,11 +197,17 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  fetchPermissionsFromApi: async () => {
+  fetchPermissionsFromApi: async (page = 1, pageSize = 20, nameFilter?: string) => {
     try {
-      const backendPerms = await permissionApi.list();
-      const mappedPerms = backendPerms.map(mapBackendPermissionToPermission);
-      set({ permissions: mappedPerms });
+      const paginatedData = await permissionApi.list({ page, page_size: pageSize, name: nameFilter });
+      const mappedPerms = paginatedData.items.map(mapBackendPermissionToPermission);
+      set({
+        permissions: mappedPerms,
+        permissionsTotal: paginatedData.total,
+        permissionsPage: paginatedData.page,
+        permissionsPageSize: paginatedData.page_size,
+        permissionsTotalPages: paginatedData.total_pages,
+      });
     } catch (error) {
       console.error('Failed to fetch permissions:', error);
     }

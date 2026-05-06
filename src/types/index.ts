@@ -27,6 +27,9 @@ export interface PermissionEntity {
   id: string;
   name: string;
   key: Permission;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type LogAction = 'create' | 'update' | 'delete' | 'assign';
@@ -67,6 +70,13 @@ export interface AppState {
   rolesTotalPages: number;
   rolesNameFilter: string;
 
+  // Permission pagination
+  permissionsTotal: number;
+  permissionsPage: number;
+  permissionsPageSize: number;
+  permissionsTotalPages: number;
+  permissionsNameFilter: string;
+
   selectEntity: (entity: { id: string; type: EntityType } | null) => void;
   setUsers: (users: User[]) => void;
   fetchUsersFromApi: (page?: number, pageSize?: number, usernameFilter?: string) => Promise<void>;
@@ -77,7 +87,10 @@ export interface AppState {
   setRolesPageSize: (size: number) => void;
   setRolesNameFilter: (filter: string) => void;
   fetchRolesFromApi: (page?: number, pageSize?: number, nameFilter?: string) => Promise<void>;
-  fetchPermissionsFromApi: () => Promise<void>;
+  setPermissionsPage: (page: number) => void;
+  setPermissionsPageSize: (size: number) => void;
+  setPermissionsNameFilter: (filter: string) => void;
+  fetchPermissionsFromApi: (page?: number, pageSize?: number, nameFilter?: string) => Promise<void>;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => Promise<{ success: boolean; error?: string }>;
   updateUser: (id: string, data: Partial<User>) => Promise<{ success: boolean; error?: string }>;
   deleteUser: (id: string) => Promise<{ success: boolean; error?: string }>;
