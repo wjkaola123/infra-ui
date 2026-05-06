@@ -1,4 +1,5 @@
 import { apiClient } from '../client';
+import type { ApiResponse } from './user';
 
 export interface BackendPermission {
   id: number;
@@ -12,7 +13,7 @@ export const permissionApi = {
     return response.data.data;
   },
   create: async (data: { name: string; description?: string }): Promise<BackendPermission> => {
-    const response = await apiClient.post<BackendPermission>('/permissions/', data);
-    return response.data;
+    const response = await apiClient.post<ApiResponse<BackendPermission>>('/permissions/', data);
+    return response.data.data;
   },
 };
