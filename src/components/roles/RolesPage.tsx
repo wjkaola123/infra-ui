@@ -81,7 +81,7 @@ export function RolesPage() {
   const handleSuccess = async (success: boolean, errorMessage?: string) => {
     if (success) {
       setNotification('Role saved successfully');
-      await fetchRolesFromApi(1, rolesPageSize, rolesNameFilter);
+      await fetchRolesFromApi(rolesPage, rolesPageSize, rolesNameFilter);
     } else {
       setNotification(errorMessage || 'Operation failed');
     }

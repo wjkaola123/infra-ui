@@ -3,12 +3,13 @@ import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { useStore } from '../../store/useStore';
+import { permissionApi } from '../../api/endpoints/permission';
 
 interface PermissionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onResult?: (success: boolean, errorMessage?: string) => void;
-  permission?: { id: string; name: string; key?: string } | null;
+  permission?: { id: string; name: string; key?: string; description?: string } | null;
 }
 
 const PERMISSION_NAME_REGEX = /^[a-z0-9_]+:[a-z0-9_]+$/;
@@ -27,6 +28,7 @@ export function PermissionModal({ isOpen, onClose, onResult, permission }: Permi
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [loadingDesc, setLoadingDesc] = useState(false);
 
   const addPermission = useStore((s) => s.addPermission);
   const updatePermission = useStore((s) => s.updatePermission);
@@ -34,7 +36,14 @@ export function PermissionModal({ isOpen, onClose, onResult, permission }: Permi
   useEffect(() => {
     if (permission) {
       setName(permission.name);
-      setDescription('');
+      setDescription(permission.description || '');
+      setLoadingDesc(true);
+      permissionApi.getById(Number(permission.id))
+        .then((data) => {
+          setDescription(data.description || '');
+        })
+        .catch(() => {})
+        .finally(() => setLoadingDesc(false));
     } else {
       setName('');
       setDescription('');
@@ -54,10 +63,15 @@ export function PermissionModal({ isOpen, onClose, onResult, permission }: Permi
     setError(null);
 
     if (permission) {
-      updatePermission(permission.id, { name: name.trim() });
-      onClose();
+      const result = await updatePermission(permission.id, { name: name.trim(), description: description.trim() || undefined });
       setSubmitting(false);
-      onResult?.(true);
+      if (result.success) {
+        onClose();
+        onResult?.(true);
+      } else {
+        setError(result.error || 'Failed to update permission');
+        onResult?.(false, result.error);
+      }
       return;
     }
 
@@ -104,22 +118,21 @@ export function PermissionModal({ isOpen, onClose, onResult, permission }: Permi
             <p className="mt-1 text-sm text-green-600">Valid format</p>
           )}
         </div>
-        {!permission && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description <span className="text-gray-400">(optional)</span>
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe what this permission controls"
-              maxLength={255}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
-            />
-            <p className="mt-1 text-xs text-gray-400">{description.length}/255</p>
-          </div>
-        )}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Description <span className="text-gray-400">(optional)</span>
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe what this permission controls"
+            maxLength={255}
+            rows={3}
+            disabled={loadingDesc}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none disabled:bg-gray-100"
+          />
+          <p className="mt-1 text-xs text-gray-400">{description.length}/255</p>
+        </div>
         {error && (
           <p className="text-sm text-red-600">{error}</p>
         )}

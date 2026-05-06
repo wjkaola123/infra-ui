@@ -98,7 +98,7 @@ export interface AppState {
   updateRole: (id: string, data: Partial<Role>) => void;
   deleteRole: (id: string) => Promise<{ success: boolean; error?: string }>;
   addPermission: (permission: { name: string; description?: string }) => Promise<{ success: boolean; error?: string }>;
-  updatePermission: (id: string, data: { name: string }) => void;
+  updatePermission: (id: string, data: { name?: string; description?: string }) => Promise<{ success: boolean; error?: string }>;
   deletePermission: (id: string) => void;
   assignRoles: (userId: string, roleIds: string[]) => void;
   assignPermissions: (roleId: string, permissionIds: string[]) => void;

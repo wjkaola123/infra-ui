@@ -294,10 +294,21 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  updatePermission: (id, data) => {
-    set((state) => ({
-      permissions: state.permissions.map((p) => (p.id === id ? { ...p, ...data } : p)),
-    }));
+  updatePermission: async (id, data: { name?: string; description?: string }) => {
+    try {
+      const backendPerm = await permissionApi.update(Number(id), data);
+      set((state) => ({
+        permissions: state.permissions.map((p) =>
+          p.id === id ? { ...p, name: backendPerm.name, description: backendPerm.description } : p
+        ),
+      }));
+      get().addLog(`Updated permission: ${data.name || backendPerm.name}`);
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || error.message || 'Update failed';
+      console.error('Failed to update permission:', errorMessage);
+      return { success: false, error: errorMessage };
+    }
   },
 
   deletePermission: (id) => {

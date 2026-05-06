@@ -35,8 +35,16 @@ export const permissionApi = {
     const response = await apiClient.get<ApiResponse<PaginatedPermissionResponse>>(url);
     return response.data.data;
   },
+  getById: async (id: number): Promise<BackendPermission> => {
+    const response = await apiClient.get<ApiResponse<BackendPermission>>(`/permissions/${id}`);
+    return response.data.data;
+  },
   create: async (data: { name: string; description?: string }): Promise<BackendPermission> => {
     const response = await apiClient.post<ApiResponse<BackendPermission>>('/permissions/', data);
+    return response.data.data;
+  },
+  update: async (id: number, data: { name?: string; description?: string }): Promise<BackendPermission> => {
+    const response = await apiClient.put<ApiResponse<BackendPermission>>(`/permissions/${id}`, data);
     return response.data.data;
   },
 };
