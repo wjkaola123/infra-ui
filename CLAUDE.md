@@ -1,79 +1,63 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Rules
 
-- Only focus on the plan and implementation of frontend.
-- If you don't have enough information about backend, ask me to fetch. 
+- Only focus on frontend plan and implementation
+- If backend info needed, ask user to fetch
 
 ## Dev Commands
 
 ```bash
-npm run dev     # Start dev server with HMR
-npm run build   # Type-check and build for production
-npm run lint    # Run ESLint
-npm run preview # Preview production build
+docker compose up --build   # Docker dev mode (preferred)
+npm run dev                  # Local dev with HMR
+npm run build                # Type-check + build
+npm run lint                 # ESLint
 ```
 
 ## Docker Dev Mode
 
-```bash
-docker compose up --build   # Start Vite dev server with hot reload
-```
+- Dockerfile.dev + Vite dev server on port 80
+- Volume mount `./src:/app/src:ro` for live reload
+- To switch back: `docker compose down && edit docker-compose.yml: dockerfile: Dockerfile && docker compose up --build`
 
-- Source code is copied into container at build time
-- Volume mount `./src:/app/src:ro` enables live code updates
-- Vite dev server runs on port 80 inside container
-- Changes to local `src/` hot-reload automatically
+## Tech Stack
 
-To switch back to production build:
-```bash
-docker compose down
-# edit docker-compose.yml: dockerfile: Dockerfile
-docker compose up --build
-```
-
-## Architecture
-
-### Tech Stack
 - **React 19** + TypeScript + Vite
-- **Tailwind CSS v4** (no config file, utility classes only)
-- **Zustand** for state management
-- **React Router v7** (HashRouter, SPA-style routing)
-- **MSW** for API mocking (workers in `public/`)
-- **Axios** for HTTP with token auth interceptors
+- **Tailwind CSS v4** (utility classes, no config file)
+- **Zustand** (single store in `src/store/useStore.ts`)
+- **React Router v7** (HashRouter SPA-style)
+- **MSW** (browser workers in `public/`, seed data in `src/mocks/data/seed.ts`)
+- **Axios** (token auth interceptors in `src/api/client.ts`)
 
-### State Management
-Single Zustand store in `src/store/useStore.ts` manages:
-- Users, roles, permissions, operation logs
-- Pagination state for user list
-- Entity selection for modals
+## API Layer
 
-User CRUD operations call both local store and backend API (`src/api/`).
+- `src/api/client.ts` — Axios with auth interceptors + token refresh
+- `src/api/endpoints/` — auth, user, role, permission handlers
+- `src/api/mappers.ts` — backend ↔ frontend type mappers
 
-### API Layer
-- `src/api/client.ts` — Axios instance with auth interceptors and token refresh
-- `src/api/endpoints/` — Auth and user endpoint handlers
-- `src/api/mappers.ts` — Backend ↔ frontend type mappers
+## Pages (HashRouter routes)
 
-### Pages (HashRouter routes)
-- `/login` — Login page
-- `/users` — User list with pagination
-- `/roles` — Role management
-- `/permissions` — Permission management
-- `/logs` — Operation logs
+| Route | Component |
+|-------|-----------|
+| `/login` | LoginPage |
+| `/` | DashboardPage |
+| `/users` | UsersPage |
+| `/roles` | RolesPage |
+| `/permissions` | PermissionsPage |
+| `/logs` | LogsPage |
 
-### Mock Layer
-MSW handlers in `src/mocks/handlers/` intercept API calls in dev mode. Seed data in `src/mocks/data/seed.ts`.
+## UI Components
 
-### UI Components
-Shared components in `src/components/ui/` (Button, Modal, Switch, Badge, Tag, Select, Input, Pagination). Pages compose these with domain-specific tables and modals.
+`src/components/ui/` — Button, Modal, Switch, Badge, Tag, Select, Input, Pagination
+
+Pages compose these with domain-specific tables and modals.
+
+## Store
+
+Single Zustand store (`useStore.ts`) manages users, roles, permissions, operation logs, pagination state for all three entities, and entity selection for modals.
 
 ## Notes
 
-- API base URL configured via `VITE_API_BASE_URL` env var (defaults to `http://localhost:8000/api/v1`)
-- Access/refresh tokens stored in `localStorage`
-- Local IDs are random strings; backend uses integer IDs (converted in API calls)
-- MSW runs as browser workers — `npm run dev` starts mock automatically when in dev mode
-- Dev mode uses Dockerfile.dev + Vite dev server (see Docker Dev Mode above)
+- API base: `VITE_API_BASE_URL` env var (default `http://localhost:8000/api/v1`)
+- Tokens in localStorage
+- Local IDs are random strings; backend uses integers (converted in API layer)
