@@ -47,4 +47,7 @@ export const permissionApi = {
     const response = await apiClient.put<ApiResponse<BackendPermission>>(`/permissions/${id}`, data);
     return response.data.data;
   },
+  remove: async (id: number): Promise<void> => {
+    await apiClient.delete(`/permissions/${id}`);
+  },
 };

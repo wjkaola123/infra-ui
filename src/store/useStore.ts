@@ -311,12 +311,20 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  deletePermission: (id) => {
+  deletePermission: async (id) => {
     const perm = get().permissions.find((p) => p.id === id);
-    set((state) => ({
-      permissions: state.permissions.filter((p) => p.id !== id),
-    }));
-    get().addLog(`Deleted permission: ${perm?.name}`);
+    try {
+      await permissionApi.remove(Number(id));
+      set((state) => ({
+        permissions: state.permissions.filter((p) => p.id !== id),
+      }));
+      get().addLog(`Deleted permission: ${perm?.name}`);
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || error.message || 'Delete failed';
+      console.error('Failed to delete permission:', errorMessage);
+      return { success: false, error: errorMessage };
+    }
   },
 
   assignRoles: (userId, roleIds) => {

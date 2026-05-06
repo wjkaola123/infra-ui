@@ -99,7 +99,7 @@ export interface AppState {
   deleteRole: (id: string) => Promise<{ success: boolean; error?: string }>;
   addPermission: (permission: { name: string; description?: string }) => Promise<{ success: boolean; error?: string }>;
   updatePermission: (id: string, data: { name?: string; description?: string }) => Promise<{ success: boolean; error?: string }>;
-  deletePermission: (id: string) => void;
+  deletePermission: (id: string) => Promise<{ success: boolean; error?: string }>;
   assignRoles: (userId: string, roleIds: string[]) => void;
   assignPermissions: (roleId: string, permissionIds: string[]) => void;
   addLog: (message: string) => void;
