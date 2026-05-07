@@ -38,6 +38,7 @@ export const useStore = create<AppState>((set, get) => ({
   rolesPage: 1,
   rolesPageSize: 10,
   rolesTotalPages: 1,
+  rolesForModal: [],
 
   // Permission pagination
   permissionsTotal: 0,
@@ -230,6 +231,16 @@ export const useStore = create<AppState>((set, get) => ({
       const errorMessage = error.response?.data?.detail || 'Create failed';
       console.error('Failed to create role:', errorMessage);
       return { success: false, error: errorMessage };
+    }
+  },
+
+  fetchRolesForModal: async () => {
+    try {
+      const paginatedData = await roleApi.list({ page: 1, page_size: 100 });
+      const mappedRoles = paginatedData.items.map(mapBackendRoleToRole);
+      set({ rolesForModal: mappedRoles });
+    } catch (error) {
+      console.error('Failed to fetch roles for modal:', error);
     }
   },
 

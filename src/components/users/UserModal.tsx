@@ -22,14 +22,14 @@ export function UserModal({ isOpen, onClose, onResult, user }: UserModalProps) {
   const [passwordError, setPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const roles = useStore((s) => s.roles);
-  const fetchRolesFromApi = useStore((s) => s.fetchRolesFromApi);
+  const roles = useStore((s) => s.rolesForModal);
+  const fetchRolesForModal = useStore((s) => s.fetchRolesForModal);
   const addUser = useStore((s) => s.addUser);
   const updateUser = useStore((s) => s.updateUser);
 
   useEffect(() => {
-    fetchRolesFromApi(1, 10000);
-  }, [fetchRolesFromApi]);
+    fetchRolesForModal();
+  }, [fetchRolesForModal]);
 
   useEffect(() => {
     if (user) {

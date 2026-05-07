@@ -70,6 +70,7 @@ export interface AppState {
   rolesPageSize: number;
   rolesTotalPages: number;
   rolesNameFilter: string;
+  rolesForModal: Role[];
 
   // Permission pagination
   permissionsTotal: number;
@@ -88,6 +89,7 @@ export interface AppState {
   setRolesPageSize: (size: number) => void;
   setRolesNameFilter: (filter: string) => void;
   fetchRolesFromApi: (page?: number, pageSize?: number, nameFilter?: string) => Promise<void>;
+  fetchRolesForModal: () => Promise<void>;
   setPermissionsPage: (page: number) => void;
   setPermissionsPageSize: (size: number) => void;
   setPermissionsNameFilter: (filter: string) => void;
