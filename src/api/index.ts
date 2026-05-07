@@ -3,4 +3,5 @@ export { userApi } from './endpoints/user';
 export { roleApi } from './endpoints/role';
 export { permissionApi } from './endpoints/permission';
 export { authApi } from './endpoints/auth';
+export { activityLogApi } from './endpoints/activityLog';
 export { mapBackendUserToUser, mapUserToBackendCreate, mapBackendRoleToRole, mapBackendPermissionToPermission } from './mappers';

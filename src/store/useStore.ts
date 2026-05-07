@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { AppState, User, Role, PermissionEntity, Permission } from '../types';
-import { userApi, roleApi, permissionApi, mapBackendUserToUser, mapBackendRoleToRole, mapBackendPermissionToPermission } from '../api';
+import type { AppState, User, Role, PermissionEntity, Permission, ActivityLogFilters } from '../types';
+import { userApi, roleApi, permissionApi, activityLogApi, mapBackendUserToUser, mapBackendRoleToRole, mapBackendPermissionToPermission } from '../api';
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
@@ -46,6 +46,17 @@ export const useStore = create<AppState>((set, get) => ({
   permissionsPageSize: 10,
   permissionsTotalPages: 1,
   permissionsNameFilter: '',
+
+  // Activity Log state
+  activityLogs: [],
+  activityLogsTotal: 0,
+  activityLogsPage: 1,
+  activityLogsPageSize: 10,
+  activityLogsTotalPages: 1,
+  activityLogsFilters: {
+    page: 1,
+    page_size: 10,
+  },
 
   selectEntity: (entity) => set({ selectedEntity: entity }),
 
@@ -358,4 +369,36 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       operationLog: [message, ...state.operationLog].slice(0, 3),
     })),
+
+  fetchActivityLogsFromApi: async (filters?: Partial<ActivityLogFilters>) => {
+    try {
+      const currentFilters = get().activityLogsFilters;
+      const mergedFilters = { ...currentFilters, ...filters };
+      const paginatedData = await activityLogApi.list(mergedFilters);
+      set({
+        activityLogs: paginatedData.items,
+        activityLogsTotal: paginatedData.total,
+        activityLogsPage: paginatedData.page,
+        activityLogsPageSize: paginatedData.page_size,
+        activityLogsTotalPages: paginatedData.total_pages,
+        activityLogsFilters: mergedFilters,
+      });
+    } catch (error) {
+      console.error('Failed to fetch activity logs:', error);
+    }
+  },
+
+  setActivityLogsPage: (page: number) => {
+    get().fetchActivityLogsFromApi({ page, page_size: get().activityLogsPageSize });
+  },
+
+  setActivityLogsPageSize: (size: number) => {
+    get().fetchActivityLogsFromApi({ page: 1, page_size: size });
+  },
+
+  setActivityLogsFilters: (filters: Partial<ActivityLogFilters>) => {
+    const currentFilters = get().activityLogsFilters;
+    const newFilters = { ...currentFilters, ...filters, page: 1 };
+    get().fetchActivityLogsFromApi(newFilters);
+  },
 }));

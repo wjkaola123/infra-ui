@@ -46,6 +46,41 @@ export interface OperationLog {
   detail: string;
 }
 
+// Activity Log types (from Audit Log API)
+export type ActivityLogAction = 'CREATE' | 'UPDATE' | 'DELETE';
+export type ActivityLogResourceType = 'user' | 'role' | 'permission';
+
+export interface ActivityLog {
+  id: number;
+  actor_user_id: number;
+  actor_username: string;
+  action: ActivityLogAction;
+  resource_type: ActivityLogResourceType;
+  resource_id: number;
+  old_value: Record<string, unknown> | null;
+  new_value: Record<string, unknown> | null;
+  ip_address: string;
+  created_at: string;
+}
+
+export interface ActivityLogFilters {
+  page: number;
+  page_size: number;
+  actor_user_id?: number;
+  resource_type?: ActivityLogResourceType;
+  action?: ActivityLogAction;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface PaginatedActivityLogs {
+  items: ActivityLog[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
 export type EntityType = 'user' | 'role' | 'permission';
 
 export interface AppState {
@@ -79,6 +114,14 @@ export interface AppState {
   permissionsTotalPages: number;
   permissionsNameFilter: string;
 
+  // Activity Log pagination
+  activityLogs: ActivityLog[];
+  activityLogsTotal: number;
+  activityLogsPage: number;
+  activityLogsPageSize: number;
+  activityLogsTotalPages: number;
+  activityLogsFilters: ActivityLogFilters;
+
   selectEntity: (entity: { id: string; type: EntityType } | null) => void;
   setUsers: (users: User[]) => void;
   fetchUsersFromApi: (page?: number, pageSize?: number, usernameFilter?: string) => Promise<void>;
@@ -106,4 +149,8 @@ export interface AppState {
   assignRoles: (userId: string, roleIds: string[]) => void;
   assignPermissions: (roleId: string, permissionIds: string[]) => void;
   addLog: (message: string) => void;
+  fetchActivityLogsFromApi: (filters?: Partial<ActivityLogFilters>) => Promise<void>;
+  setActivityLogsPage: (page: number) => void;
+  setActivityLogsPageSize: (size: number) => void;
+  setActivityLogsFilters: (filters: Partial<ActivityLogFilters>) => void;
 }
