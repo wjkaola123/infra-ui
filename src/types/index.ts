@@ -30,6 +30,7 @@ export interface PermissionEntity {
   description?: string;
   createdAt?: string;
   updatedAt?: string;
+  assignedRolesCount?: number;
 }
 
 export type LogAction = 'create' | 'update' | 'delete' | 'assign';

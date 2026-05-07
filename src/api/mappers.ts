@@ -52,6 +52,7 @@ export const mapBackendPermissionToPermission = (backendPerm: BackendPermission)
   description: backendPerm.description,
   createdAt: backendPerm.created_at,
   updatedAt: backendPerm.updated_at,
+  assignedRolesCount: backendPerm.assigned_roles_count,
 });
 
 export const mapBackendRolePermissionsToPermissionEntities = (perms: { id: number; name: string; description?: string }[]): PermissionEntity[] =>

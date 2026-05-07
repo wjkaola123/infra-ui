@@ -8,6 +8,7 @@ export interface BackendPermission {
   description?: string;
   created_at?: string;
   updated_at?: string;
+  assigned_roles_count?: number;
 }
 
 export interface PaginatedPermissionResponse {

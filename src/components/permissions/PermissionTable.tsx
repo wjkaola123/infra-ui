@@ -48,6 +48,7 @@ export function PermissionTable({ onEdit }: PermissionTableProps) {
               <input type="checkbox" className="rounded border-gray-300" />
             </th>
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Permission Name</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Assigned Roles</th>
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Description</th>
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
           </tr>
@@ -59,6 +60,7 @@ export function PermissionTable({ onEdit }: PermissionTableProps) {
                 <input type="checkbox" className="rounded border-gray-300" />
               </td>
               <td className="px-4 py-3 text-sm font-medium text-gray-900">{perm.name}</td>
+              <td className="px-4 py-3 text-sm text-gray-500">{perm.assignedRolesCount ?? 0}</td>
               <td className="px-4 py-3 text-sm text-gray-500">{perm.description || '-'}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
