@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
+import { getUsername, getCurrentUserRoles } from '../../api';
 
 const navItems = [
   { path: '/users', label: 'Users', icon: UsersIcon },
@@ -9,6 +10,9 @@ const navItems = [
 
 export function Sidebar() {
   const navigate = useNavigate();
+  const username = getUsername();
+  const userRoles = getCurrentUserRoles();
+  const userRole = userRoles[0] || 'No Role';
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
@@ -25,11 +29,11 @@ export function Sidebar() {
       <div className="px-4 py-4 border-b border-slate-700">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-            <span className="text-white text-sm font-medium">A</span>
+            <span className="text-white text-sm font-medium">{username.charAt(0).toUpperCase()}</span>
           </div>
           <div>
-            <p className="text-sm text-white font-medium">admin</p>
-            <p className="text-xs text-slate-400">Super Admin</p>
+            <p className="text-sm text-white font-medium">{username}</p>
+            <p className="text-xs text-slate-400">{userRole}</p>
           </div>
         </div>
       </div>

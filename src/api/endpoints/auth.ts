@@ -1,4 +1,4 @@
-import { apiClient, setTokens, clearTokens } from '../client';
+import { apiClient, setTokens, clearTokens, setCurrentUser } from '../client';
 
 export interface LoginRequest {
   username: string;
@@ -15,6 +15,8 @@ export interface TokenResponse {
   access_token: string;
   refresh_token: string;
   token_type: string;
+  username: string;
+  roles: string[];
 }
 
 export interface ApiResponse<T> {
@@ -28,6 +30,7 @@ export const authApi = {
     const response = await apiClient.post<ApiResponse<TokenResponse>>('/auth/login', data);
     const tokens = response.data.data;
     setTokens(tokens.access_token, tokens.refresh_token);
+    setCurrentUser(tokens.username, tokens.roles);
     return tokens;
   },
 

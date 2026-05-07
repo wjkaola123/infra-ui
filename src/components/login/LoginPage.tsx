@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { authApi, setUsername as saveUsername } from '../../api';
+import { authApi } from '../../api';
 import { Input } from '../ui/Input';
 
 export function LoginPage() {
@@ -15,7 +15,6 @@ export function LoginPage() {
 
     try {
       await authApi.login({ username, password });
-      saveUsername(username);
       window.location.hash = '#/';
       window.location.reload();
     } catch (err: any) {

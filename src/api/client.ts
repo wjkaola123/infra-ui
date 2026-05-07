@@ -26,6 +26,21 @@ export const setUsername = (username: string) => {
 
 export const getUsername = () => localStorage.getItem('username') || '未知用户';
 
+export const setCurrentUser = (username: string, roles: string[]) => {
+  localStorage.setItem('username', username);
+  localStorage.setItem('userRoles', JSON.stringify(roles));
+};
+
+export const getCurrentUserRoles = (): string[] => {
+  const rolesStr = localStorage.getItem('userRoles');
+  if (!rolesStr) return [];
+  try {
+    return JSON.parse(rolesStr);
+  } catch {
+    return [];
+  }
+};
+
 export const clearTokens = () => {
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
