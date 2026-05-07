@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import type { AppState, User, Role, PermissionEntity, Permission } from '../types';
-import { SEED_LOGS } from '../mocks/data/seed';
 import { userApi, roleApi, permissionApi, mapBackendUserToUser, mapBackendRoleToRole, mapBackendPermissionToPermission } from '../api';
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
@@ -9,7 +8,7 @@ export const useStore = create<AppState>((set, get) => ({
   users: [],
   roles: [],
   permissions: [],
-  logs: SEED_LOGS,
+  logs: [],
 
   selectedEntity: null,
   operationLog: [],
